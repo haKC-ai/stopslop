@@ -1,8 +1,8 @@
 """Report assembly against schemas/report.v2.json.
 
 Deterministic findings and LLM prose live in separate fields and are never
-blended into one number. There is no global threshold and no `is_slop`
-boolean anywhere in this schema. The consumer decides.
+blended into one number. There is no global threshold and no slop boolean
+anywhere in this schema. The consumer decides.
 """
 
 from __future__ import annotations

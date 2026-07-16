@@ -99,7 +99,7 @@ def _bucket_terms(findings: Sequence[Finding]) -> dict[str, set[str]]:
 
 
 def _bucket_hits(findings: Sequence[Finding]) -> dict[str, int]:
-    hits: dict[str, int] = {era: 0 for era in _ERA_BUCKET_CATEGORIES.values()}
+    hits: dict[str, int] = dict.fromkeys(_ERA_BUCKET_CATEGORIES.values(), 0)
     for f in findings:
         era = _ERA_BUCKET_CATEGORIES.get(f.category)
         if era is not None:
@@ -174,9 +174,7 @@ def estimate_era(findings: Sequence[Finding], words: int) -> EraEstimate:
             + (", ".join(vendors) if vendors else "see tier-1 findings")
             + ". Near-conclusive independent of the lexical layer (guide, reference markup bugs)."
         )
-    elif material and len(tier2_categories) >= 2:
-        confidence = "moderate"
-    elif len(material) >= 2:
+    elif material and len(tier2_categories) >= 2 or len(material) >= 2:
         confidence = "moderate"
     else:
         confidence = "low"

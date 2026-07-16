@@ -283,14 +283,19 @@ def check_containment_blast_radius(text: str, sents: list[tuple[int, int]]) -> l
     gaps: list[Gap] = []
     responder_numbers: set[str] = set()
     n = 0
-    for s, e in sents:
+    for i, (s, e) in enumerate(sents):
         sentence = text[s:e]
         numbers = _NUMBER_RE.findall(sentence)
         if not numbers:
             continue
+        # Framing often sits in the neighboring sentence ("Both are
+        # containment actions, not victim counts."), so check one either side.
+        lo = sents[max(0, i - 1)][0]
+        hi = sents[min(len(sents) - 1, i + 1)][1]
+        neighborhood = text[lo:hi]
         has_responder = bool(_RESPONDER_VERB_RE.search(sentence))
         has_impact = bool(_IMPACT_FRAME_RE.search(sentence))
-        has_correct = bool(_CORRECT_FRAME_RE.search(sentence))
+        has_correct = bool(_CORRECT_FRAME_RE.search(neighborhood))
         if has_responder:
             responder_numbers.update(numbers)
             if has_correct:
@@ -648,7 +653,7 @@ def check_sample_provenance(text: str) -> list[Gap]:
 # --------------------------------------------------------------------------
 
 _DETECTION_DELIVERABLE_RE = re.compile(
-    r"hunting quer|detection (?:rule|logic|content|quer)|signatures?\b|\bYARA\b|\bSigma\b"
+    r"hunting quer|detections?\b|signatures?\b|\bYARA\b|\bSigma\b"
     r"|\bKQL\b|hunt(?:ing)? (?:package|content)",
     re.IGNORECASE,
 )

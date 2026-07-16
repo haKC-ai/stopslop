@@ -18,8 +18,8 @@ from core.layer1.fingerprint import analyze_fingerprint
 from core.layer2.auditor import UNAVAILABLE_NOTE, run_audit
 from core.layer2.hygiene import HYGIENE_CHECKS
 from core.layer2.rigor import Gap, analyze_rigor
-from core.normalizers.text_clean import normalize_text
 from core.layer3.provenance import ProvenanceEnvelope, load_envelope, provenance_section
+from core.normalizers.text_clean import normalize_text
 from core.render.markdown import render_markdown
 from core.report import build_report
 from core.rules.engine import run_rules
