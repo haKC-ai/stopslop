@@ -259,7 +259,10 @@ _RESPONDER_VERB_RE = re.compile(
     re.IGNORECASE,
 )
 _IMPACT_FRAME_RE = re.compile(
-    r"blast radius|\bimpact\b|\breach\b|\bvictims?\b|\bcompromised\b|\baffected\b"
+    # "affected version/package" names the artifact, not the blast radius, so
+    # those noun pairings are excluded.
+    r"blast radius|\bimpact\b|\breach\b|\bvictims?\b|\bcompromised\b"
+    r"|\baffected\b(?!\s+(?:versions?|packages?|releases?|files?))"
     r"|devastating|staggering|unprecedented|scale of the (?:attack|campaign)",
     re.IGNORECASE,
 )
