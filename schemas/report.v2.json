@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stopslop.report.v2",
+  "title": "stopslop report v2",
+  "type": "object",
+  "properties": {
+    "schema": { "const": "stopslop.report.v2" },
+    "created_at": { "type": "integer" },
+    "tool_version": { "type": "string" },
+    "content_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "word_count": { "type": "integer", "minimum": 0 },
+    "source_meta": { "type": "object" },
+    "rules_version": { "type": "string" },
+    "fingerprint": {
+      "type": "object",
+      "properties": {
+        "era_estimate": {
+          "type": "object",
+          "properties": {
+            "era": {
+              "type": "string",
+              "enum": ["none", "gpt4", "gpt4o", "gpt5", "grok", "mixed"]
+            },
+            "confidence": { "type": "string", "enum": ["low", "moderate", "high"] },
+            "bucket_densities": {
+              "type": "object",
+              "additionalProperties": { "type": "number" }
+            },
+            "vendor_artifacts": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "multi_vendor_conflict": { "type": "boolean" },
+            "rationale": { "type": "array", "items": { "type": "string" } },
+            "caveats": { "type": "array", "items": { "type": "string" } }
+          },
+          "required": ["era", "confidence", "rationale", "caveats"],
+          "additionalProperties": false
+        },
+        "score": {
+          "type": "object",
+          "properties": {
+            "tier1": { "type": "number", "minimum": 0 },
+            "tier2_gated": { "type": "number", "minimum": 0 },
+            "tier3_gated": { "type": "number", "minimum": 0 },
+            "negative_evidence": { "type": "number", "minimum": 0 },
+            "net": { "type": "number", "minimum": 0 }
+          },
+          "required": ["tier1", "tier2_gated", "tier3_gated", "negative_evidence", "net"],
+          "additionalProperties": false
+        },
+        "category_densities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "hits": { "type": "integer", "minimum": 0 },
+              "per_1000_words": { "type": "number", "minimum": 0 },
+              "tier": { "type": "integer" }
+            },
+            "required": ["hits", "per_1000_words", "tier"],
+            "additionalProperties": false
+          }
+        },
+        "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+        "negative_findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } }
+      },
+      "required": ["era_estimate", "score", "category_densities", "findings", "negative_findings"],
+      "additionalProperties": false
+    },
+    "rigor": {
+      "type": "object",
+      "properties": {
+        "gaps": { "type": "array", "items": { "$ref": "#/$defs/gap" } },
+        "acknowledged": { "type": "array", "items": { "$ref": "#/$defs/gap" } },
+        "ioc_durability": {
+          "type": "object",
+          "properties": {
+            "behaviors": { "type": "array", "items": { "type": "string" } },
+            "values": { "type": "array", "items": { "type": "string" } },
+            "value_weighted": { "type": "boolean" }
+          },
+          "required": ["behaviors", "values", "value_weighted"],
+          "additionalProperties": false
+        },
+        "confidence_terms": {
+          "type": "object",
+          "properties": {
+            "icd203_terms": { "type": "array", "items": { "type": "string" } },
+            "incoherent_stacks": { "type": "array", "items": { "type": "string" } }
+          },
+          "required": ["icd203_terms", "incoherent_stacks"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["gaps", "acknowledged", "ioc_durability", "confidence_terms"],
+      "additionalProperties": false
+    },
+    "llm_audit": {
+      "type": "object",
+      "properties": {
+        "available": { "type": "boolean" },
+        "provider": { "type": ["string", "null"] },
+        "model_version": { "type": ["string", "null"] },
+        "critical_review": { "type": ["string", "null"] },
+        "proposed_research": { "type": ["string", "null"] },
+        "note": { "type": "string" }
+      },
+      "required": ["available", "note"],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "present": { "type": "boolean" },
+        "envelope": {
+          "type": ["object", "null"],
+          "properties": {
+            "typed_chars": { "type": "integer", "minimum": 0 },
+            "pasted_chars": { "type": "integer", "minimum": 0 },
+            "paste_events": { "type": "integer", "minimum": 0 },
+            "elapsed_seconds": { "type": "integer", "minimum": 0 },
+            "word_budget": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "meter_line": { "type": ["string", "null"] },
+        "paste_ratio": { "type": ["number", "null"] },
+        "note": { "type": "string" }
+      },
+      "required": ["present", "envelope", "meter_line", "paste_ratio", "note"],
+      "additionalProperties": false
+    },
+    "word_budget": {
+      "type": "object",
+      "properties": {
+        "budget": { "type": ["integer", "null"] },
+        "used": { "type": ["integer", "null"] }
+      },
+      "required": ["budget", "used"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "created_at",
+    "tool_version",
+    "content_sha256",
+    "word_count",
+    "source_meta",
+    "rules_version",
+    "fingerprint",
+    "rigor",
+    "llm_audit",
+    "provenance",
+    "word_budget"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "span": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "integer", "minimum": 0 },
+        "end": { "type": "integer", "minimum": 0 },
+        "text": { "type": "string" }
+      },
+      "required": ["start", "end", "text"],
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "properties": {
+        "rule_id": { "type": "string" },
+        "category": { "type": "string" },
+        "tier": { "type": "integer" },
+        "weight": { "type": "number" },
+        "never_sufficient_alone": { "type": "boolean" },
+        "source_citation": { "type": "string" },
+        "spans": { "type": "array", "items": { "$ref": "#/$defs/span" } },
+        "details": { "type": "string" }
+      },
+      "required": [
+        "rule_id",
+        "category",
+        "tier",
+        "weight",
+        "never_sufficient_alone",
+        "source_citation",
+        "spans",
+        "details"
+      ],
+      "additionalProperties": false
+    },
+    "gap": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "check": { "type": "string" },
+        "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+        "status": { "type": "string", "enum": ["missed", "acknowledged"] },
+        "description": { "type": "string" },
+        "spans": { "type": "array", "items": { "$ref": "#/$defs/span" } }
+      },
+      "required": ["id", "check", "severity", "status", "description", "spans"],
+      "additionalProperties": false
+    }
+  }
+}

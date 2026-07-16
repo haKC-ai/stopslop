@@ -1,0 +1,100 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "structure.copulative-avoidance",
+      "layer": 1,
+      "category": "copulative-avoidance",
+      "tier": 2,
+      "weight": 1.0,
+      "description": "Avoidance of basic copulatives: 'serves as / stands as / boasts / functions as' replacing plain is/are/has. Measured as a ratio against plain copulas, not a raw hit count (one study found a 10%+ drop in is/are in 2023 academic writing).",
+      "source_citation": "Wikipedia:Signs of AI writing § Avoidance of basic copulatives",
+      "never_sufficient_alone": true,
+      "check": "copulative_ratio",
+      "params": { "min_hits": 4, "ratio_threshold": 0.2 },
+      "examples": {
+        "positive": ["The team serves as a research unit. The chain stands as an example. The tool functions as a proxy. The framework boasts many features."],
+        "negative": ["The team is a research unit. The chain is an example. It has a proxy mode and it is fast. The parser has three stages and they are stable."]
+      }
+    },
+    {
+      "id": "structure.rule-of-three",
+      "layer": 1,
+      "category": "rule-of-three",
+      "tier": 2,
+      "weight": 0.6,
+      "description": "Rule-of-three adjective triplets ('comprehensive, multi-pronged, and holistic'), tracked as document-level density. Narrowed to adjective-shaped triplets so technical enumerations ('remote shell, file transfer, SOCKS5 proxy') don't fire.",
+      "source_citation": "Wikipedia:Signs of AI writing § Rule of three",
+      "never_sufficient_alone": true,
+      "check": "rule_of_three",
+      "params": { "min_hits": 2 },
+      "examples": {
+        "positive": ["The strengths are numerous, comprehensive, and multifaceted. The approach was comprehensive, multi-pronged, and holistic."],
+        "negative": ["The implant supports remote shell, file transfer, and SOCKS5 proxying."]
+      }
+    },
+    {
+      "id": "structure.reference-plurality",
+      "layer": 1,
+      "category": "vague-attribution",
+      "tier": 2,
+      "weight": 0.8,
+      "description": "Cross-check: plural sourcing claims ('several sources', 'experts argue') against the document's actual reference count. Fires only when the claimed plurality outruns the references present.",
+      "source_citation": "Wikipedia:Signs of AI writing § Vague attributions of opinion",
+      "never_sufficient_alone": true,
+      "check": "reference_plurality",
+      "params": { "min_refs": 2 },
+      "examples": {
+        "positive": ["Several sources support this assessment, and experts argue the trend holds."],
+        "negative": ["Several sources support this: https://a.example/1 and https://b.example/2 and the vendor advisory [1]."]
+      }
+    },
+    {
+      "id": "structure.boldface-density",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.8,
+      "description": "Mechanical boldface density: every list label bolded plus mid-prose emphasis.",
+      "source_citation": "Wikipedia:Signs of AI writing § Overuse of boldface",
+      "never_sufficient_alone": true,
+      "check": "boldface_density",
+      "params": { "density_threshold": 10.0, "min_hits": 10 },
+      "examples": {
+        "positive": ["**One**: a. **Two**: b. **Three**: c. **Four**: d. **Five**: e. **Six**: f. **Seven**: g. **Eight**: h. **Nine**: i. **Ten**: j."],
+        "negative": ["Only **one** phrase is bolded in this entire document, which is normal emphasis."]
+      }
+    },
+    {
+      "id": "structure.heading-level-skip",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.3,
+      "description": "Skipped heading levels (# straight to ###), a mechanical outline artifact.",
+      "source_citation": "Wikipedia:Signs of AI writing § Section headings",
+      "never_sufficient_alone": true,
+      "check": "heading_level_skip",
+      "examples": {
+        "positive": ["# Top\n\n### Skipped straight to h3\n\ntext"],
+        "negative": ["# Top\n\n## Proper h2\n\n### Then h3\n\ntext"]
+      }
+    },
+    {
+      "id": "structure.title-case-headings",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.4,
+      "description": "Title case in headings, strong form only: minor words capitalized mid-heading ('Analysis And Assessment'), which no house style produces.",
+      "source_citation": "Wikipedia:Signs of AI writing § Title case",
+      "never_sufficient_alone": true,
+      "check": "title_case_headings",
+      "params": { "min_hits": 1 },
+      "examples": {
+        "positive": ["## Analysis And Assessment\n\ntext"],
+        "negative": ["## Analysis and assessment\n\ntext"]
+      }
+    }
+  ]
+}

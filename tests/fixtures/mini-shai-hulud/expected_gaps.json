@@ -1,0 +1,25 @@
+{
+  "comment": "Golden expectations for tests/fixtures/mini-shai-hulud/source.md. The integration test asserts every check listed here appears among the MISSED gaps, and that the well-sourced fixture misses none of them.",
+  "required_missed_checks": [
+    "attribution",
+    "naming-continuity",
+    "containment-blast-radius",
+    "capability-vs-impact",
+    "victim-quantification",
+    "motive",
+    "exposure-window",
+    "sample-provenance",
+    "detection-validation"
+  ],
+  "required_missed_gap_ids": [
+    "attribution-absent",
+    "naming-continuity",
+    "capability-vs-impact",
+    "victim-count-unquantified",
+    "motive-unexamined",
+    "exposure-window-missing",
+    "sample-provenance-missing",
+    "detection-validation-missing"
+  ],
+  "containment_min_hits": 2
+}

@@ -1,0 +1,69 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "vocab.era.gpt4",
+      "layer": 1,
+      "category": "vocab-era-gpt4",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "AI-overused vocabulary, 2023 to mid-2024 (GPT-4) bucket. Scored by density and co-occurrence, never by a single hit: one or two hits may be coincidence, but these words cluster. 'key' is matched only in its importance-adjective position to spare 'API key' and 'XOR key'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Words overused by AI, 2023 to mid-2024 bucket",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:delv(?:e|es|ed|ing)|tapestr(?:y|ies)|testaments?|intricate(?:ly)?|meticulous(?:ly)?|boast(?:s|ed|ing)?|garner(?:s|ed|ing)?|interplay|vibrant|pivotal|underscor(?:e|es|ed|ing)|crucial(?:ly)?|additionally|bolster(?:s|ed|ing)?|enduring|landscapes?|valuable|emphasiz(?:e|es|ed|ing)|key\\s+(?:role|player|turning|finding|findings|takeaway|insight|component|driver|factor|aspect|element|contribution|moment))\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["The report delves into an intricate tapestry of tradecraft, a testament to the evolving landscape."],
+        "negative": ["The malware reads the XOR key from its config and decrypts the API key store."]
+      }
+    },
+    {
+      "id": "vocab.era.gpt4o",
+      "layer": 1,
+      "category": "vocab-era-gpt4o",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "AI-overused vocabulary, mid-2024 to mid-2025 (GPT-4o) bucket. Overlaps the GPT-4 bucket on purpose because the guide's lists overlap; the era estimator disambiguates on distinctive terms.",
+      "source_citation": "Wikipedia:Signs of AI writing § Words overused by AI, mid-2024 to mid-2025 bucket",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:align(?:s|ed|ing)?\\s+with|bolster(?:s|ed|ing)?|crucial(?:ly)?|emphasiz(?:e|es|ed|ing)|enhanc(?:e|es|ed|ing|ements?)|enduring|foster(?:s|ed|ing)?|highlight(?:s|ed|ing)?|pivotal|showcas(?:e|es|ed|ing)|underscor(?:e|es|ed|ing)|vibrant)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["This approach aligns with best practices, fostering resilience and showcasing the team's depth while highlighting key wins."],
+        "negative": ["The patch changed the parser. Nothing else moved."]
+      }
+    },
+    {
+      "id": "vocab.era.gpt5",
+      "layer": 1,
+      "category": "vocab-era-gpt5",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "AI-overused vocabulary, mid-2025 onward (GPT-5) bucket: the list narrows to emphasizing, enhance, highlighting, showcasing. Notability-claim language is covered by the canned-notability category. Era estimator calls gpt5 only when this narrowed set fires without earlier-era distinctive terms.",
+      "source_citation": "Wikipedia:Signs of AI writing § Words overused by AI, mid-2025 onward bucket",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:emphasiz(?:e|es|ed|ing)|enhanc(?:e|es|ed|ing|ements?)|highlight(?:s|ed|ing)?|showcas(?:e|es|ed|ing))\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Enhancing coverage while showcasing results and highlighting the approach, emphasizing outcomes."],
+        "negative": ["The actor pivoted to a second C2 within an hour."]
+      }
+    },
+    {
+      "id": "vocab.era.grok",
+      "layer": 1,
+      "category": "vocab-era-grok",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "Grok-idiosyncratic vocabulary: causal, empirical, correlate, plus continued overuse of underscore as of 2026.",
+      "source_citation": "Wikipedia:Signs of AI writing § Words overused by AI, Grok notes",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:causal(?:ly)?|empirical(?:ly)?|correlate(?:s|d)?|underscor(?:e|es|ed|ing))\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["The empirical data correlate with a causal link, underscoring the empirical trend."],
+        "negative": ["The beacon interval was 300 seconds with 20 percent jitter."]
+      }
+    }
+  ]
+}

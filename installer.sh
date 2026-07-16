@@ -2,33 +2,34 @@
 set -euo pipefail
 
 choose_python() {
-  for b in python3.13 python3.12 python3.11 python3.10 python3; do
+  for b in python3.13 python3.12 python3.11; do
     if command -v "$b" >/dev/null 2>&1; then
       echo "$b"
       return 0
     fi
   done
-  echo "No suitable python3 found" >&2
+  echo "stopslop needs Python 3.11+" >&2
   exit 1
 }
 
 PYBIN="$(choose_python)"
-PYVER="$($PYBIN -c 'import sys;print(f"{sys.version_info[0]}.{sys.version_info[1]}")')"
-VENV_DIR=".venv-cyberslop-py${PYVER}"
+VENV_DIR=".venv"
 
-$PYBIN -m venv "$VENV_DIR"
-# shellcheck disable=SC1090
+"$PYBIN" -m venv "$VENV_DIR"
+# shellcheck disable=SC1091
 source "$VENV_DIR/bin/activate"
 
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -e ".[dev]"
+
+if [ ! -f .env ]; then
+  cp .env.example .env
+  echo "Created .env from .env.example (only needed for the LLM auditor)."
+fi
 
 echo
 echo "Installed into $VENV_DIR"
 echo
 echo "Next steps:"
 echo "1) source $VENV_DIR/bin/activate"
-echo "2) Copy .env.example to .env and set your API keys if you use CLI"
-echo "3) For Streamlit set secrets in .streamlit/secrets.toml"
-echo "4) Run: streamlit run app_streamlit.py"
-echo "   or CLI: python cli.py --help"
+echo "2) stopslop --file tests/fixtures/mini-shai-hulud/source.md --no-llm --format md"

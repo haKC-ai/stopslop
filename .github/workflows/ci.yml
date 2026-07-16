@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: ["main", "rebuild/**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check core tests
+
+      - name: Type-check (strict on core/)
+        run: mypy
+
+      - name: Tests
+        run: pytest -q --cov=core --cov-report=term-missing
+
+      - name: Golden fixture gate
+        run: python scripts/ci_fixture_check.py
