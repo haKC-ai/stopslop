@@ -1,18 +1,48 @@
+"""Provider adapters produce the two prose artifacts. They never set a score."""
+
 from __future__ import annotations
-from typing import List, Dict, Any
+
+import json
+from abc import ABC, abstractmethod
+from typing import Any, TypedDict
+
 from core.utils.json_sanitize import safe_json_loads
 
-class ProviderBase:
-    name = "base"
 
-    def audit(self, content: str, rules: List[dict], system_prompt: str, model: str, timeout: int = 20) -> Dict[str, Any]:
-        raise NotImplementedError
+class AuditArtifacts(TypedDict):
+    critical_review: str
+    proposed_research: str
+
+
+class ProviderBase(ABC):
+    name: str = "base"
+
+    @abstractmethod
+    def audit(
+        self,
+        content: str,
+        deterministic_findings: dict[str, Any],
+        system_prompt: str,
+        model: str,
+        timeout: int = 30,
+    ) -> AuditArtifacts:
+        """Return the two artifacts, grounded in the deterministic findings."""
 
     @staticmethod
-    def build_prompt_payload(content: str, rules: List[dict]) -> str:
-        rule_slim = [{"rule_id": r["rule_id"], "hit": r["hit"], "weight": r["weight"], "desc": r["description"]} for r in rules]
-        return f"CONTENT:\n{content}\n\nLOCAL_RULES:\n{rule_slim}\n"
+    def build_payload(content: str, deterministic_findings: dict[str, Any]) -> str:
+        return (
+            "SOURCE TEXT:\n"
+            f"{content}\n\n"
+            "DETERMINISTIC FINDINGS (already computed; ground your prose in these, "
+            "do not re-score them):\n"
+            f"{json.dumps(deterministic_findings, indent=2)}\n"
+        )
 
     @staticmethod
-    def parse_json_only(output: str) -> Dict[str, Any]:
-        return safe_json_loads(output)
+    def parse_artifacts(output: str) -> AuditArtifacts:
+        obj = safe_json_loads(output)
+        review = obj.get("critical_review")
+        research = obj.get("proposed_research")
+        if not isinstance(review, str) or not isinstance(research, str):
+            raise ValueError("model output missing critical_review/proposed_research strings")
+        return {"critical_review": review, "proposed_research": research}

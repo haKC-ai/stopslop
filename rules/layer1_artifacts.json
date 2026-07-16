@@ -1,0 +1,212 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "artifact.content-reference",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "ChatGPT contentReference[oaicite:N]{index=N} citation markup leaked into the document. Mechanical, not stylistic: highest-confidence signal class in the guide.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "contentReference\\[oaicite:\\d+\\]\\{index=\\d+\\}",
+      "params": { "vendor": "chatgpt" },
+      "examples": {
+        "positive": ["Attribution is asserted contentReference[oaicite:0]{index=0} without basis."],
+        "negative": ["Attribution is asserted [1] with the basis in the appendix."]
+      }
+    },
+    {
+      "id": "artifact.oai-citation",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "ChatGPT oai_citation marker leaked into the document.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "oai_citation",
+      "params": { "vendor": "chatgpt" },
+      "examples": {
+        "positive": ["Per NIST guidance oai_citation:12‡microsoft.com the controls apply."],
+        "negative": ["Per NIST guidance (SP 800-218) the controls apply."]
+      }
+    },
+    {
+      "id": "artifact.turn-marker",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "ChatGPT turn0search0-style browse markers, including PUA-wrapped variants.",
+      "source_citation": "Wikipedia:Signs of AI writing § turn0search0",
+      "never_sufficient_alone": false,
+      "pattern": "[\\uE000-\\uF8FF]?turn\\d+(?:search|image|news|file|view|fetch|forecast)\\d+[\\uE000-\\uF8FF]?",
+      "params": { "vendor": "chatgpt" },
+      "examples": {
+        "positive": ["Documented by the vendor turn0search3 in their advisory."],
+        "negative": ["Documented by the vendor in advisory MSA-2026-011."]
+      }
+    },
+    {
+      "id": "artifact.lenticular-marker",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Lenticular-bracket citation markers like 【85†L261-269】 (DeepSeek-flavored).",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "【\\d+†[^】\\n]{0,30}】",
+      "params": { "vendor": "deepseek" },
+      "examples": {
+        "positive": ["The hunting methodology garnered visibility【85†L261-269】 early."],
+        "negative": ["The hunting methodology is documented in appendix B, lines 261-269."]
+      }
+    },
+    {
+      "id": "artifact.gemini-cite",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Gemini [cite: N] citation markers.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "\\[cite:\\s*\\d+(?:,\\s*\\d+)*\\]",
+      "params": { "vendor": "gemini" },
+      "examples": {
+        "positive": ["The number illustrates the blast radius[cite: 4] across developers."],
+        "negative": ["The number is cited to the vendor advisory (ref 4)."]
+      }
+    },
+    {
+      "id": "artifact.grok-render",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Grok citation-card render artifacts: grok_render_citation_card_json and <grok-card> tags.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "grok_render_citation_card_json|<grok-card[^>\\n]*>",
+      "params": { "vendor": "grok" },
+      "examples": {
+        "positive": ["Sources agree <grok-card data-id=\"a1b2c3\"> on the timeline."],
+        "negative": ["Sources agree on the timeline; see the two advisories."]
+      }
+    },
+    {
+      "id": "artifact.perplexity-refs",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Perplexity [attached_file:N] / [web:N] reference markers.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "\\[attached_file:\\d+\\]|\\[web:\\d+\\]",
+      "params": { "vendor": "perplexity" },
+      "examples": {
+        "positive": ["The sample was first flagged in May [web:1] by an anonymous uploader [attached_file:1]."],
+        "negative": ["The sample was first flagged in May by an anonymous uploader (VT submission)."]
+      }
+    },
+    {
+      "id": "artifact.canvas-writing-block",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Assistant canvas ':::writing{variant=\"document\" id=NNN}' block markers leaked into text.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": ":::writing\\{variant=\"document\" id=\"?\\d+\"?\\}",
+      "params": { "vendor": "assistant-canvas" },
+      "examples": {
+        "positive": [":::writing{variant=\"document\" id=\"48151\"}\nThe report begins here."],
+        "negative": ["The report begins here, no markup preamble."]
+      }
+    },
+    {
+      "id": "artifact.attributable-index",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "ChatGPT attribution JSON fragments: {\"attribution\":{\"attributableIndex\":\"X-Y\"}}.",
+      "source_citation": "Wikipedia:Signs of AI writing § Reference markup bugs",
+      "never_sufficient_alone": false,
+      "pattern": "\\{\"attribution\":\\{\"attributableIndex\":\"\\d+-\\d+\"\\}\\}",
+      "params": { "vendor": "chatgpt" },
+      "examples": {
+        "positive": ["The campaign expanded.{\"attribution\":{\"attributableIndex\":\"120-4\"}} Analysts noticed."],
+        "negative": ["The campaign expanded. Analysts noticed within a day."]
+      }
+    },
+    {
+      "id": "artifact.utm-chatgpt",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "URLs carrying utm_source=chatgpt.com or utm_source=openai: the link was copied out of a ChatGPT session.",
+      "source_citation": "Wikipedia:Signs of AI writing § utm_source=",
+      "never_sufficient_alone": false,
+      "pattern": "utm_source=(?:chatgpt\\.com|openai)",
+      "params": { "vendor": "chatgpt" },
+      "examples": {
+        "positive": ["https://www.virustotal.com/gui/domain/example.com?utm_source=chatgpt.com"],
+        "negative": ["https://www.virustotal.com/gui/domain/example.com"]
+      }
+    },
+    {
+      "id": "artifact.utm-copilot",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "URLs carrying utm_source=copilot.com.",
+      "source_citation": "Wikipedia:Signs of AI writing § utm_source=",
+      "never_sufficient_alone": false,
+      "pattern": "utm_source=copilot\\.com",
+      "params": { "vendor": "copilot" },
+      "examples": {
+        "positive": ["https://example.com/advisory?utm_source=copilot.com"],
+        "negative": ["https://example.com/advisory?utm_source=newsletter"]
+      }
+    },
+    {
+      "id": "artifact.referrer-grok",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "URLs carrying referrer=grok.com.",
+      "source_citation": "Wikipedia:Signs of AI writing § utm_source=",
+      "never_sufficient_alone": false,
+      "pattern": "referrer=grok\\.com",
+      "params": { "vendor": "grok" },
+      "examples": {
+        "positive": ["https://example.com/report?referrer=grok.com"],
+        "negative": ["https://example.com/report?ref=homepage"]
+      }
+    },
+    {
+      "id": "placeholder.template-leakage",
+      "layer": 1,
+      "category": "placeholder-leakage",
+      "tier": 1,
+      "weight": 2.0,
+      "description": "Placeholder and template leakage: 2025-XX-XX dates, INSERT_SOURCE_URL, [Your Name], editor comments. Mechanical evidence the text was generated from a template and never finished.",
+      "source_citation": "Wikipedia:Signs of AI writing § Phrasal templates and placeholder text",
+      "never_sufficient_alone": false,
+      "pattern": "\\b20\\d\\d-XX-XX\\b|INSERT_[A-Z_]{3,}|PASTE_[A-Z_]{3,}_HERE|\\[Your Name\\]|\\[Describe [^\\]\\n]{3,}\\]|<!--\\s*EDIT BELOW THIS LINE\\s*-->|\\[DATE: [^\\]\\n]{0,20}XX[^\\]\\n]{0,20}\\]|\\b[Ll]orem ipsum\\b",
+      "examples": {
+        "positive": ["Findings publish on [DATE: 2026-XX-XX] at INSERT_SOURCE_URL. Best, [Your Name]"],
+        "negative": ["Findings publish on 2026-03-14 at https://example.com/report."]
+      }
+    }
+  ]
+}

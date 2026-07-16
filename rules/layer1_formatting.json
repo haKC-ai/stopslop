@@ -1,0 +1,80 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "format.em-dash-spaced",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.3,
+      "description": "Space-surrounded em dashes, against typographic convention. The guide is explicit this is weak alone and most useful in combination; the tier-2 clustering gate enforces that.",
+      "source_citation": "Wikipedia:Signs of AI writing § Overuse of em dashes",
+      "never_sufficient_alone": true,
+      "pattern": "[ \\t]—[ \\t]",
+      "examples": {
+        "positive": ["The chain — a modular design — rotates C2 — constantly."],
+        "negative": ["The chain—a modular design—rotates C2 constantly."]
+      }
+    },
+    {
+      "id": "format.curly-quotes",
+      "layer": 1,
+      "category": "curly-quotes",
+      "tier": 3,
+      "weight": 0.02,
+      "description": "Curly quotation marks and apostrophes. Guide caveat applies in full: Word smart quotes, macOS defaults, and Chicago style all produce these, so this must never fire alone and carries near-zero weight. Presence narrows the vendor estimate away from Gemini and Claude, which typically emit straight quotes.",
+      "source_citation": "Wikipedia:Signs of AI writing § Curly quotation marks and apostrophes",
+      "never_sufficient_alone": true,
+      "pattern": "[\\u2018\\u2019\\u201C\\u201D]",
+      "examples": {
+        "positive": ["The group’s tooling “rotates” infrastructure, and it’s the operator’s habit."],
+        "negative": ["The group's tooling \"rotates\" infrastructure, and it's the operator's habit."]
+      }
+    },
+    {
+      "id": "format.emoji-decoration",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.8,
+      "description": "Emoji used as document decoration. Analytic writing has no emoji; section-marker emoji are an LLM formatting default.",
+      "source_citation": "Wikipedia:Signs of AI writing § Emoji",
+      "never_sufficient_alone": true,
+      "pattern": "[\\U0001F000-\\U0001FAFF\\u2600-\\u27BF\\u2B00-\\u2BFF]",
+      "examples": {
+        "positive": ["# Threat Report 🔍\n\n## 📌 Findings\n\n## 🎯 Targets"],
+        "negative": ["# Threat Report\n\n## Findings\n\n## Targets"]
+      }
+    },
+    {
+      "id": "format.inline-header-list",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.3,
+      "description": "Inline-header vertical lists: every bullet shaped as '- **Header**: text'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Inline-header vertical lists",
+      "never_sufficient_alone": true,
+      "pattern": "(?m)^\\s*[-*+]\\s+\\*\\*[^*\\n]+\\*\\*\\s*:",
+      "examples": {
+        "positive": ["- **Initial Access**: phishing\n- **Persistence**: scheduled task\n- **Exfil**: HTTPS"],
+        "negative": ["- phishing for initial access\n- a scheduled task for persistence\n- HTTPS exfil"]
+      }
+    },
+    {
+      "id": "format.thematic-break-heading",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.15,
+      "description": "Thematic break (---) immediately before a heading, an LLM sectioning habit. Weak alone; gated by tier-2 clustering.",
+      "source_citation": "Wikipedia:Signs of AI writing § Horizontal rules",
+      "never_sufficient_alone": true,
+      "pattern": "(?m)^-{3,}[ \\t]*\\n\\s*#{1,6}[ \\t]",
+      "examples": {
+        "positive": ["text\n\n---\n\n## Next Section\n\nmore"],
+        "negative": ["text\n\n## Next Section\n\nmore"]
+      }
+    }
+  ]
+}

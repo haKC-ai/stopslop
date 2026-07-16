@@ -1,0 +1,95 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "hygiene.cve-format",
+      "layer": 2,
+      "category": "indicator-hygiene",
+      "tier": 2,
+      "weight": 1.0,
+      "description": "Malformed or implausible CVE identifiers. v1's pattern fired on every valid CVE (the CVE[^0-9] alternation matched the hyphen); this tokenizes CVE-like strings, validates ^CVE-YYYY-NNNN+$ with no upper digit bound, and range-checks the year against 1999..current+1.",
+      "source_citation": "stopslop v1 cve-format rule, repaired",
+      "never_sufficient_alone": true,
+      "check": "cve_format",
+      "examples": {
+        "positive": ["The malware probably exploits CVE-9999 in the wild."],
+        "negative": ["CVE-2021-44228 (Log4Shell) and CVE-2025-8088 are both confirmed with vendor advisories."]
+      }
+    },
+    {
+      "id": "hygiene.hash-length",
+      "layer": 2,
+      "category": "indicator-hygiene",
+      "tier": 2,
+      "weight": 1.0,
+      "description": "Hex runs of 16..128 chars whose length matches no standard digest (32/40/64/128). v1 checked only 30/33/50 and missed the 34-char hash in its own sample. URLs and dashed identifiers (UUIDs) are excluded.",
+      "source_citation": "stopslop v1 hash-length rule, repaired",
+      "never_sufficient_alone": true,
+      "check": "hash_length",
+      "examples": {
+        "positive": ["Indicator hash abcdef1234567890abcdef1234567890ab was observed."],
+        "negative": ["SHA256 7f83b1657ff1fc53b92dc18148a1d65dfa13514a2f6b9f9f1c6d1e6f5d1d1c28 and MD5 d41d8cd98f00b204e9800998ecf8427e are well-formed."]
+      }
+    },
+    {
+      "id": "hygiene.ip-octets",
+      "layer": 2,
+      "category": "indicator-hygiene",
+      "tier": 2,
+      "weight": 1.0,
+      "description": "IPv4 indicators with octets out of range, defang-aware.",
+      "source_citation": "stopslop v1 ioc-format rule, repaired",
+      "never_sufficient_alone": true,
+      "check": "ip_octets",
+      "examples": {
+        "positive": ["C2 at 999.12.300.5 was active."],
+        "negative": ["C2 at 104.194.140.6 and 10[.]0[.]0[.]12 were active."]
+      }
+    },
+    {
+      "id": "hygiene.mitre-reference",
+      "layer": 2,
+      "category": "indicator-hygiene",
+      "tier": 2,
+      "weight": 0.8,
+      "description": "ATT&CK referenced without any T/TA technique ID anywhere in the document.",
+      "source_citation": "stopslop v1 mitre-format rule, repaired",
+      "never_sufficient_alone": true,
+      "check": "mitre_reference",
+      "examples": {
+        "positive": ["The campaign maps to ATT&CK across the board."],
+        "negative": ["The campaign maps to ATT&CK T1059.003 and TA0002."]
+      }
+    },
+    {
+      "id": "hygiene.onion-length",
+      "layer": 2,
+      "category": "indicator-hygiene",
+      "tier": 2,
+      "weight": 0.8,
+      "description": "Onion addresses whose label length matches neither v2 (16) nor v3 (56).",
+      "source_citation": "stopslop v1 onion-misuse rule, repaired",
+      "never_sufficient_alone": true,
+      "check": "onion_length",
+      "examples": {
+        "positive": ["Panel at abcdefghij23.onion was seen."],
+        "negative": ["Panel at expyuzz4wqqyqhjn.onion was seen."]
+      }
+    },
+    {
+      "id": "hygiene.future-confirmation",
+      "layer": 2,
+      "category": "indicator-hygiene",
+      "tier": 2,
+      "weight": 1.0,
+      "description": "Impossible timeline claims: confirmation or compromise promised for a far-future year. v1 flagged any mention of any year past 2030, including legitimate projections.",
+      "source_citation": "stopslop v1 time-travel rule, repaired",
+      "never_sufficient_alone": true,
+      "check": "future_confirmation",
+      "examples": {
+        "positive": ["The breach will be confirmed by 2035."],
+        "negative": ["Support for the platform ends in 2035 per the vendor roadmap."]
+      }
+    }
+  ]
+}

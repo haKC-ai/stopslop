@@ -1,0 +1,85 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "human.plain-copula-density",
+      "layer": 1,
+      "category": "human-signal",
+      "tier": 3,
+      "weight": -1.5,
+      "description": "Negative evidence: high density of simple is/are/has phrasing, a sign of human writing. Subtracts from the structural and lexical components; never touches tier 1.",
+      "source_citation": "Wikipedia:Signs of AI writing § Signs of human writing, Syntax",
+      "never_sufficient_alone": true,
+      "check": "plain_copula_density",
+      "params": { "density_threshold": 30.0, "min_hits": 8 },
+      "examples": {
+        "positive": ["The rule is simple. The chain is short. The C2 is dead. It has one job and it is done. The parser is small, it has two states, and both are stable. That is the whole design and it is enough."],
+        "negative": ["The chain stands as a modular design, boasting persistence and serving as a relay while showcasing rotation."]
+      }
+    },
+    {
+      "id": "human.plain-verb-density",
+      "layer": 1,
+      "category": "human-signal",
+      "tier": 3,
+      "weight": -1.0,
+      "description": "Negative evidence: plain verbs where a stiff synonym exists (wrote not authored, used not utilized, died not passed away).",
+      "source_citation": "Wikipedia:Signs of AI writing § Signs of human writing, Syntax",
+      "never_sufficient_alone": true,
+      "check": "plain_verb_density",
+      "params": { "density_threshold": 2.0, "min_hits": 3 },
+      "examples": {
+        "positive": ["They pushed a rule, caught a dozen hits, and handed the artifacts over. The parser broke once. Someone found the bug and put a fix in the same day."],
+        "negative": ["The team utilized a detection capability, facilitating artifact acquisition and leveraging remediation workflows."]
+      }
+    },
+    {
+      "id": "human.superlative-definitive",
+      "layer": 1,
+      "category": "human-signal",
+      "tier": 3,
+      "weight": -0.4,
+      "description": "Negative evidence: superlative or definitive statements ('the only', 'the first', 'the best'). LLM defaults hedge; a human commits.",
+      "source_citation": "Wikipedia:Signs of AI writing § Signs of human writing, Syntax",
+      "never_sufficient_alone": true,
+      "pattern": "\\bthe (?:only|first|best|worst|largest|single biggest)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["It's the only owned asset in the chain, and the best move in the report."],
+        "negative": ["It may be among the more notable assets in the chain."]
+      }
+    },
+    {
+      "id": "human.hedging-intensifiers",
+      "layer": 1,
+      "category": "human-signal",
+      "tier": 3,
+      "weight": -0.15,
+      "description": "Negative evidence: hedging qualifiers and casual intensifiers ('very', 'perhaps', 'roughly', 'tends to').",
+      "source_citation": "Wikipedia:Signs of AI writing § Signs of human writing, Syntax",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:very|perhaps|roughly|tends to|sort of|kind of|a bit|worth testing|close to)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Roughly twenty nodes, perhaps more. The cadence tends to drift a bit."],
+        "negative": ["Exactly twenty nodes were enumerated, with a fixed cadence."]
+      }
+    },
+    {
+      "id": "human.wordy-constructions",
+      "layer": 1,
+      "category": "human-signal",
+      "tier": 3,
+      "weight": -0.2,
+      "description": "Negative evidence: isolated wordy constructions ('as a result of', 'in order to', 'the fact that'), which LLM style guides train away from.",
+      "source_citation": "Wikipedia:Signs of AI writing § Signs of human writing, Syntax",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:as a result of|in order to|the fact that|due to the fact)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["In order to replay the C2, and due to the fact that staging rotated, they scripted it."],
+        "negative": ["To replay the C2 they scripted it, since staging rotated."]
+      }
+    }
+  ]
+}

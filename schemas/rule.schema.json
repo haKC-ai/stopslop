@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stopslop.rule.v2",
+  "title": "stopslop rule",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$" },
+    "layer": { "type": "integer", "enum": [1, 2] },
+    "category": { "type": "string", "minLength": 1 },
+    "tier": { "type": "integer", "enum": [1, 2, 3] },
+    "weight": { "type": "number", "minimum": -10, "maximum": 10 },
+    "description": { "type": "string", "minLength": 1 },
+    "source_citation": { "type": "string", "minLength": 1 },
+    "never_sufficient_alone": { "type": "boolean" },
+    "pattern": { "type": "string", "minLength": 1 },
+    "check": { "type": "string", "minLength": 1 },
+    "flags": { "type": "string", "pattern": "^[imsx]*$" },
+    "params": { "type": "object" }
+  },
+  "required": [
+    "id",
+    "layer",
+    "category",
+    "tier",
+    "weight",
+    "description",
+    "source_citation",
+    "never_sufficient_alone"
+  ],
+  "oneOf": [
+    { "required": ["pattern"], "not": { "required": ["check"] } },
+    { "required": ["check"], "not": { "required": ["pattern"] } }
+  ],
+  "additionalProperties": false
+}

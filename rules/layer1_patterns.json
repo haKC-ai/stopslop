@@ -1,0 +1,213 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "pattern.negative-parallelism",
+      "layer": 1,
+      "category": "negative-parallelism",
+      "tier": 2,
+      "weight": 0.6,
+      "description": "Negative parallelism: 'not just X but Y', 'not X, but Y', 'it's not ..., it's ...', 'no ..., no ..., just ...'. The guide calls this stereotypically THE AI sign. Needs clustering; one instance is ordinary English.",
+      "source_citation": "Wikipedia:Signs of AI writing § Negative parallelisms",
+      "never_sufficient_alone": true,
+      "pattern": "\\bnot (?:just|merely|only|simply)\\b[^.\\n;]{0,80}?[,;—–-]\\s*(?:but|it[’']s|it is)\\b|\\bit[’']?s not\\b[^.\\n;]{0,60}[,;—–-]\\s*it[’']?s\\b|\\bno \\w+[^.\\n;]{0,40}, no \\w+[^.\\n;]{0,40}, just\\b|\\bisn[’']t (?:just|merely)\\b[^.\\n]{0,80}?[—–]",
+      "flags": "i",
+      "examples": {
+        "positive": ["The chain is not just a delivery mechanism — it's a philosophy. It’s not merely malware; it's an ecosystem."],
+        "negative": ["The loader is a delivery mechanism. It fetches the next stage and exits."]
+      }
+    },
+    {
+      "id": "pattern.rather-than-reversal",
+      "layer": 1,
+      "category": "negative-parallelism",
+      "tier": 3,
+      "weight": 0.05,
+      "description": "Grok-flavored 'X rather than Y' reversal. Extremely weak on its own: humans use this constantly. Minimal weight, only meaningful inside a tier-3 co-occurrence cluster.",
+      "source_citation": "Wikipedia:Signs of AI writing § Negative parallelisms, Grok notes",
+      "never_sufficient_alone": true,
+      "pattern": "\\b\\w+ rather than \\w+\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["The design favors resilience rather than speed, and stealth rather than reach."],
+        "negative": ["The design favors resilience over speed."]
+      }
+    },
+    {
+      "id": "pattern.superficial-tails",
+      "layer": 1,
+      "category": "superficial-analysis",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Superficial-analysis tails: a trailing present participle ('highlighting ..., underscoring ..., reflecting ...') appended to an otherwise factual sentence.",
+      "source_citation": "Wikipedia:Signs of AI writing § Superficial analyses",
+      "never_sufficient_alone": true,
+      "pattern": ",\\s+(?:highlighting|underscoring|reflecting|emphasizing|showcasing|demonstrating|signaling|signalling|cementing|symbolizing|illustrating|ensuring|contributing to)\\b[^.\\n]{2,140}\\.",
+      "flags": "i",
+      "examples": {
+        "positive": ["The campaign used USB propagation, underscoring its significance within the broader landscape."],
+        "negative": ["The campaign used USB propagation. Removable media policy blocks it."]
+      }
+    },
+    {
+      "id": "pattern.undue-significance",
+      "layer": 1,
+      "category": "undue-significance",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Undue emphasis on significance, legacy, and broader trends: 'stands as a testament', 'a pivotal role', 'marking a shift', 'evolving landscape', 'setting the stage for'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Undue emphasis on significance, legacy, and broader trends",
+      "never_sufficient_alone": true,
+      "pattern": "\\bstands? as a testament\\b|\\ba pivotal (?:role|moment|player)\\b|\\bmarks? a pivotal\\b|\\bmarking a (?:pivotal|shift)\\b|\\bkey turning point\\b|\\bevolving landscape\\b|\\bindelible mark\\b|\\breflects? broader\\b|\\bsetting the stage for\\b|\\bfor years to come\\b|\\bshape the trajectory\\b|\\bwatershed moment\\b|\\bparadigm shift\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["This stands as a testament to the actor's reach, marking a shift that will shape the trajectory of the field for years to come."],
+        "negative": ["The actor reused one certificate across nine servers."]
+      }
+    },
+    {
+      "id": "pattern.vague-attribution",
+      "layer": 1,
+      "category": "vague-attribution",
+      "tier": 2,
+      "weight": 0.4,
+      "description": "Vague attributions of opinion: 'industry reports indicate', 'observers have cited', 'experts argue', 'several sources'. The companion check structure.reference-plurality cross-checks the claimed plurality against the actual reference count.",
+      "source_citation": "Wikipedia:Signs of AI writing § Vague attributions of opinion",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:industry reports (?:indicate|suggest)|observers have (?:cited|noted)|experts (?:argue|believe|suggest|say)|some critics argue|several sources|many analysts|multiple (?:sources|reports) (?:indicate|suggest|confirm))\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Industry reports indicate this is common, and experts argue the tempo reflects state resourcing."],
+        "negative": ["Sekoia reports the loader count directly, with the YARA rule published in the appendix."]
+      }
+    },
+    {
+      "id": "pattern.canned-notability",
+      "layer": 1,
+      "category": "canned-notability",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Canned notability and media-coverage claims: 'independent coverage', 'trade publications', 'profiled in', 'a leading voice'. In CTI this shows up as vendor-report name-dropping.",
+      "source_citation": "Wikipedia:Signs of AI writing § Canned emphasis on notability, attribution, media coverage",
+      "never_sufficient_alone": true,
+      "pattern": "\\bindependent coverage\\b|\\btrade publications\\b|\\bprofiled in\\b|\\bwritten by a leading\\b|\\bleading voice in\\b|\\bactive social media presence\\b|\\bmajor (?:technology|media) outlets\\b|\\bgarner(?:ing|ed)? (?:significant )?media attention\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["The team is a leading voice in the community with independent coverage across trade publications."],
+        "negative": ["The team published the rule set on GitHub on January 9."]
+      }
+    },
+    {
+      "id": "pattern.outline-conclusions",
+      "layer": 1,
+      "category": "outline-conclusions",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Outline-shaped conclusions: 'Despite these challenges, ...', 'Challenges and Future Directions', 'Future Outlook', 'In conclusion'. The rigid formula is the tell, not the mention of challenges.",
+      "source_citation": "Wikipedia:Signs of AI writing § Outline-like conclusions about challenges and future prospects",
+      "never_sufficient_alone": true,
+      "pattern": "(?m)^#{1,6}[^\\n]*(?:Challenges and Future|Future Outlook|Future Directions)[^\\n]*$|\\bDespite these (?:challenges|limitations|minor limitations)\\b|\\bIn conclusion\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Despite these challenges, the future remains bright. In conclusion, the report is a landmark."],
+        "negative": ["The report leaves the initial access vector open and says so."]
+      }
+    },
+    {
+      "id": "pattern.cutoff-selfref",
+      "layer": 1,
+      "category": "cutoff-disclaimers",
+      "tier": 1,
+      "weight": 2.0,
+      "description": "Knowledge-cutoff self-reference: 'as of my last knowledge update', 'as an AI language model'. Mechanical chat leakage, near-conclusive on its own.",
+      "source_citation": "Wikipedia:Signs of AI writing § Knowledge-cutoff disclaimers",
+      "never_sufficient_alone": false,
+      "pattern": "\\bas of my (?:last )?knowledge (?:update|cutoff)\\b|\\bas an AI(?: language)? model\\b|\\bas of my last update\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["As of my last knowledge update, no public attribution has been made."],
+        "negative": ["As of January 2026 no public attribution has been made."]
+      }
+    },
+    {
+      "id": "pattern.gap-speculation",
+      "layer": 1,
+      "category": "cutoff-disclaimers",
+      "tier": 2,
+      "weight": 0.6,
+      "description": "Gap speculation around missing information: 'while specific details are limited', 'not widely documented', 'based on available information', 'maintains a low profile'. Includes the RAG variant: claiming information isn't public and then speculating about what it likely is.",
+      "source_citation": "Wikipedia:Signs of AI writing § Knowledge-cutoff disclaimers and speculation about gaps",
+      "never_sufficient_alone": true,
+      "pattern": "\\bwhile specific details\\b[^.\\n]{0,80}\\b(?:limited|scarce|unavailable)\\b|\\bnot widely documented\\b|\\bbased on available information\\b|\\bmaintains a low profile\\b|\\bin the available sources\\b|\\bdetails remain (?:scarce|limited|unclear)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["While specific details regarding the timeline are limited in the available sources, the impact is undeniable."],
+        "negative": ["The registry API gives per-version timestamps, so the timeline is reconstructable."]
+      }
+    },
+    {
+      "id": "pattern.correspondence-leakage",
+      "layer": 1,
+      "category": "correspondence-leakage",
+      "tier": 1,
+      "weight": 2.5,
+      "description": "Communication intended for the chat user, leaked into the document: 'I hope this helps', 'Would you like me to', 'Certainly!', 'Below is a comprehensive ...', 'let me know if'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Communication intended for the user",
+      "never_sufficient_alone": false,
+      "pattern": "\\bI hope this helps\\b|\\bWould you like me to\\b|(?m:^\\s*(?:Certainly|Of course|Sure)[!,])|\\b(?:here|below) is a (?:detailed|comprehensive) (?:breakdown|analysis|overview)\\b|\\blet me know if\\b|\\bBest regards,\\s*\\n?\\s*\\[",
+      "flags": "i",
+      "examples": {
+        "positive": ["Certainly! Below is a comprehensive analysis. I hope this helps! Let me know if you'd like more."],
+        "negative": ["The analysis covers three campaigns. Scope ends at the registry layer."]
+      }
+    },
+    {
+      "id": "pattern.today-opener",
+      "layer": 1,
+      "category": "promotional-language",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Promotional 'in today's ever-evolving threat landscape' openers.",
+      "source_citation": "Wikipedia:Signs of AI writing § Promotional and advertisement-like language",
+      "never_sufficient_alone": true,
+      "pattern": "\\bin today[’']s (?:ever-evolving |rapidly (?:evolving|changing) |interconnected |fast-paced |digital |modern )?(?:threat landscape|world|digital (?:ecosystem|age|world)|landscape|business environment)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["In today’s ever-evolving threat landscape, few campaigns compare. In today’s interconnected digital ecosystem, risk compounds."],
+        "negative": ["Supply chain compromises rose 40 percent year over year per the registry's own data."]
+      }
+    },
+    {
+      "id": "pattern.vendor-hype",
+      "layer": 1,
+      "category": "promotional-language",
+      "tier": 2,
+      "weight": 0.3,
+      "description": "Marketing adjectives in analytic context (ported from stopslop v1 vendor-hype).",
+      "source_citation": "Wikipedia:Signs of AI writing § Promotional and advertisement-like language; stopslop v1 rule, repaired",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:next[- ]gen(?:eration)?|groundbreaking|unparalleled|revolutionary|game[- ]chang(?:ing|er)|cutting[- ]edge|state[- ]of[- ]the[- ]art)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["A revolutionary next gen platform with groundbreaking, unparalleled coverage."],
+        "negative": ["The platform added coverage for three new log sources."]
+      }
+    },
+    {
+      "id": "pattern.important-to-note",
+      "layer": 1,
+      "category": "didactic-disclaimers",
+      "tier": 3,
+      "weight": 0.2,
+      "description": "Didactic 'it's important to note' disclaimers (historical indicator).",
+      "source_citation": "Wikipedia:Signs of AI writing § Didactic disclaimers (historical indicators)",
+      "never_sufficient_alone": true,
+      "pattern": "\\bit[’']s important to (?:note|remember|understand)\\b|\\bit is (?:important|worth) (?:to note|noting)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["It's important to note that this trend will likely continue, and it is worth noting the pattern."],
+        "negative": ["This trend continued through Q3 per the telemetry."]
+      }
+    }
+  ]
+}

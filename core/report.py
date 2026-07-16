@@ -1,79 +1,62 @@
-from __future__ import annotations
-import hashlib
-import time
-from typing import Dict, Any, List
+"""Report assembly against schemas/report.v2.json.
 
-def sha256(s: str) -> str:
+Deterministic findings and LLM prose live in separate fields and are never
+blended into one number. There is no global threshold and no `is_slop`
+boolean anywhere in this schema. The consumer decides.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import time
+from pathlib import Path
+from typing import Any
+
+import jsonschema
+
+from core import __version__
+from core.layer1.fingerprint import FingerprintResult
+from core.layer2.rigor import RigorResult
+from core.textmodel import word_count
+
+_SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "report.v2.json"
+
+
+def _sha256(s: str) -> str:
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
-def build_report(content: str,
-                 meta: dict,
-                 rules_findings: List[dict],
-                 rules_score: float,
-                 llm_results: List[dict],
-                 agg: dict,
-                 threshold: float,
-                 providers_used: List[str],
-                 models_used: dict,
-                 rules_version: str,
-                 friction: List[dict]) -> dict:
-    return {
-        "schema": "slopwatch.report.v1",
-        "created_at": int(time.time()),
-        "content_sha256": sha256(content),
-        "source_meta": meta,
-        "providers_used": providers_used,
-        "models_used": models_used,
-        "rules_version": rules_version,
-        "rules_findings": rules_findings,
-        "rules_score": rules_score,
-        "llm_results": llm_results,
-        "combined_score": agg["combined_score"],
-        "decision_slop": agg["combined_score"] >= threshold,
-        "confidence": agg["confidence"],
-        "threshold": threshold,
-        "overall_reasons": agg["reasons"],
-        "friction": friction
-    }
 
-def to_markdown(report: dict) -> str:
-    lines: List[str] = []
-    lines.append(f"# SLOPwatch report")
-    lines.append(f"- Created: {report['created_at']}")
-    lines.append(f"- Combined score: {report['combined_score']:.3f}")
-    lines.append(f"- Decision slop: {report['decision_slop']}")
-    lines.append(f"- Confidence: {report['confidence']:.2f}")
-    lines.append("")
-    lines.append("## Rule findings")
-    for f in report["rules_findings"]:
-        lines.append(f"- {f['rule_id']}: hit={f['hit']} weight={f['weight']} {f.get('details','')}")
-    lines.append("")
-    lines.append("## LLM results")
-    for r in report["llm_results"]:
-        lines.append(f"- is_slop={r.get('is_slop')} confidence={r.get('confidence')} reason={r.get('overall_reason')}")
-    lines.append("")
-    lines.append("## Reasons")
-    for reason in report["overall_reasons"]:
-        lines.append(f"- {reason}")
-    lines.append("")
-    lines.append("## Friction plan")
-    if not report.get("friction"):
-        lines.append("- No frictions suggested")
-    else:
-        for f in report["friction"]:
-            lines.append(f"- [{f['severity']:.2f}] {f['title']}")
-            if f.get("triggers"):
-                trig = []
-                rh = f["triggers"].get("rules_hit", [])
-                if rh:
-                    trig.append("rules: " + ",".join(rh))
-                rt = f["triggers"].get("risk_tags", [])
-                if rt:
-                    trig.append("risk: " + ",".join(rt))
-                if trig:
-                    lines.append("  - triggers: " + " | ".join(trig))
-            for step in f.get("steps", []):
-                lines.append(f"  - {step}")
-            if f.get("rationale"):
-                lines.append(f"  - rationale: {f['rationale']}")
-    return "\n".join(lines)
+def load_report_schema() -> dict[str, Any]:
+    with open(_SCHEMA_PATH, encoding="utf-8") as f:
+        schema: dict[str, Any] = json.load(f)
+    return schema
+
+
+def build_report(
+    content: str,
+    source_meta: dict[str, Any],
+    fingerprint: FingerprintResult,
+    rigor: RigorResult,
+    llm_audit: dict[str, Any],
+    provenance: dict[str, Any],
+    rules_version: str,
+    word_budget: int | None = None,
+    words_used: int | None = None,
+) -> dict[str, Any]:
+    report: dict[str, Any] = {
+        "schema": "stopslop.report.v2",
+        "created_at": int(time.time()),
+        "tool_version": __version__,
+        "content_sha256": _sha256(content),
+        "word_count": word_count(content),
+        "source_meta": source_meta,
+        "rules_version": rules_version,
+        "fingerprint": fingerprint.to_dict(),
+        "rigor": rigor.to_dict(),
+        "llm_audit": llm_audit,
+        "provenance": provenance,
+        "word_budget": {"budget": word_budget, "used": words_used},
+    }
+    jsonschema.validate(report, load_report_schema())
+    return report
