@@ -19,7 +19,7 @@
           "properties": {
             "era": {
               "type": "string",
-              "enum": ["none", "gpt4", "gpt4o", "gpt5", "grok", "mixed"]
+              "enum": ["none", "gpt4", "gpt4o", "gpt5", "grok", "chat2026", "claude", "mixed"]
             },
             "confidence": { "type": "string", "enum": ["low", "moderate", "high"] },
             "bucket_densities": {

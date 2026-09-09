@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "rules": [
     {
       "id": "vocab.era.gpt4",
@@ -10,7 +10,7 @@
       "description": "AI-overused vocabulary, 2023 to mid-2024 (GPT-4) bucket. Scored by density and co-occurrence, never by a single hit: one or two hits may be coincidence, but these words cluster. 'key' is matched only in its importance-adjective position to spare 'API key' and 'XOR key'.",
       "source_citation": "Wikipedia:Signs of AI writing § Words overused by AI, 2023 to mid-2024 bucket",
       "never_sufficient_alone": true,
-      "pattern": "\\b(?:delv(?:e|es|ed|ing)|tapestr(?:y|ies)|testaments?|intricate(?:ly)?|meticulous(?:ly)?|boast(?:s|ed|ing)?|garner(?:s|ed|ing)?|interplay|vibrant|pivotal|underscor(?:e|es|ed|ing)|crucial(?:ly)?|additionally|bolster(?:s|ed|ing)?|enduring|landscapes?|valuable|emphasiz(?:e|es|ed|ing)|key\\s+(?:role|player|turning|finding|findings|takeaway|insight|component|driver|factor|aspect|element|contribution|moment))\\b",
+      "pattern": "\\b(?:delv(?:e|es|ed|ing)|tapestr(?:y|ies)|testaments?|intricate(?:ly)?|meticulous(?:ly)?|boast(?:s|ed|ing)?|garner(?:s|ed|ing)?|interplay|vibrant|pivotal|underscor(?:e|es|ed|ing)|crucial(?:ly)?|additionally|bolster(?:s|ed|ing)?|enduring|landscapes?|valuable|robust(?:ly|ness)?|emphasiz(?:e|es|ed|ing)|key\\s+(?:role|player|turning|finding|findings|takeaway|insight|component|driver|factor|aspect|element|contribution|moment))\\b",
       "flags": "i",
       "examples": {
         "positive": ["The report delves into an intricate tapestry of tradecraft, a testament to the evolving landscape."],
@@ -63,6 +63,38 @@
       "examples": {
         "positive": ["The empirical data correlate with a causal link, underscoring the empirical trend."],
         "negative": ["The beacon interval was 300 seconds with 20 percent jitter."]
+      }
+    },
+    {
+      "id": "vocab.era.chat2026",
+      "layer": 1,
+      "category": "vocab-era-chat2026",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "AI-overused vocabulary of the 2025-2026 chat models (Claude 4.x, GPT-5, Gemini 3): genuinely, nuanced, load-bearing, compelling, seamless, profound, transformative, holistic, paramount, multifaceted, invaluable, myriad, plethora, symphony, demystify, unleash, unveil, 'at its core', 'at the forefront', 'deceptively simple', 'heavy lifting', 'a lot to unpack', 'quiet confidence'. Security-domain collisions are excluded on purpose: 'beacon' (C2), 'realm' (Kerberos), 'unlock' (devices), 'harness' (test harness), 'elevate' (privileges) only match in their figurative frames. Feeds the chat2026 era bucket together with the narrative pattern categories.",
+      "source_citation": "Polytranslator, Claude-speak: 'genuinely', 'nuanced', 'load-bearing'; Olivia Cal, AI words blacklist 2026: 'Demystify', 'Symphony', 'Myriad', 'Plethora', 'Unleash', 'At its core'; Forbes (2026-02-03): 'quiet' everywhere; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:genuinely|nuanced?|load-bearing|compelling|seamless(?:ly)?|navigat(?:e|es|ing) the (?:complexities|landscape|nuances)|the realm of|embark(?:s|ed|ing)? on|elevat(?:e|es|ed|ing) (?:the|your|their|our) (?:experience|understanding|game|work|approach|conversation)|empower(?:s|ed|ing)?|unlock(?:s|ed|ing)? (?:deeper|new|the (?:full|true)|insights?|value|potential|opportunities)|harness(?:es|ed|ing)? the (?:power|potential|full)|cultivat(?:e|es|ed|ing)|streamlin(?:e|es|ed|ing)|resonat(?:e|es|ed|ing)|profound(?:ly)?|transformative|holistic(?:ally)?|paramount|multifaceted|invaluable|myriad|plethora|symphony|demystif(?:y|ies|ied|ying)|unleash(?:es|ed|ing)?|unveil(?:s|ed|ing)?|at its core|at the forefront|deceptively simple|heavy lifting|a lot to unpack|quiet(?:ly)? (?:confidence|truth|rebellion|power|revolution|shift|brilliance|competence|reliability|strength))\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Genuinely, the nuanced answer is that this deceptively simple gate does the heavy lifting, a transformative and multifaceted design."],
+        "negative": ["The Cobalt Strike beacon checked in every 300 seconds. The Kerberos realm was misconfigured, so the operator could unlock the device and elevate privileges."]
+      }
+    },
+    {
+      "id": "vocab.era.claude",
+      "layer": 1,
+      "category": "vocab-era-claude",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "Claude-idiosyncratic vocabulary (Claude 4.x through Opus 5, 2025-2026), the per-model bucket the guide's 'Differences between LLMs' section calls for. Anchored on 'load-bearing', the strongest quantified narrative tell in the literature: in a 461k GitHub pull-request corpus it appears 929 times inside the Claude-authored cluster against 82 outside it. Runners-up: 'the seam', 'the tell', 'the unlock', 'carry the argument', 'earns its keep', 'doing the work', 'hand-waving', 'different physics', 'lands hardest', 'worth sitting with', plus consultant register ('double-click on', 'pressure-test', 'north star'). 'surface' as a verb and 'beacon' are deliberately excluded: both are ordinary SOC vocabulary and would fire on every hunt writeup.",
+      "source_citation": "louisabraham/load-bearing, the load-bearing vocabulary of Claude (461k PR corpus, 929 in-cluster vs 82 out); claudisms.ai, a living banlist of AI-writing tells; explainx.ai, Claude Opus 5 Claudisms (2026-08); Ivo Velitchkov, 22 Claude Cliches (2026-06-25); Wikipedia:Signs of AI writing § Differences between LLMs",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:load-bearing|the (?:seam|tell|unlock)\\b|carry the argument|earns its keep|doing the (?:real )?work here|hand-?waving|reflexive hedging|different physics|lands hardest|worth sitting with|the line I keep coming back to|double-click(?:ing)? on|pressure-test(?:ing|ed)?|north star)\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["That gate is load-bearing. The seam is the tell, and the unlock is that it earns its keep without hand-waving."],
+        "negative": ["The attack surface is large. Analysts surface findings weekly, and the beacon interval was 300 seconds."]
       }
     }
   ]

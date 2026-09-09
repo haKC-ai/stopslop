@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "rules": [
     {
       "id": "artifact.content-reference",
@@ -206,6 +206,102 @@
       "examples": {
         "positive": ["Findings publish on [DATE: 2026-XX-XX] at INSERT_SOURCE_URL. Best, [Your Name]"],
         "negative": ["Findings publish on 2026-03-14 at https://example.com/report."]
+      }
+    },
+    {
+      "id": "artifact.think-tag",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Reasoning-model <think> / </think> tags leaked into the document (DeepSeek R1 and the Qwen family emit these around the chain of thought).",
+      "source_citation": "Wikipedia:Signs of AI writing § Internal formatting and reference markup bugs; PAN 2026 reasoning-trajectory detection task",
+      "never_sufficient_alone": false,
+      "pattern": "</?think>",
+      "params": { "vendor": "deepseek" },
+      "examples": {
+        "positive": ["<think>The user wants a summary.</think> The campaign began in June."],
+        "negative": ["The campaign began in June. We think the loader was staged a week earlier."]
+      }
+    },
+    {
+      "id": "artifact.claude-thinking-tag",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Claude extended-thinking and harness tags leaked into the document: <thinking>, <antThinking>, <...>.",
+      "source_citation": "Wikipedia:Signs of AI writing § Internal formatting and reference markup bugs; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": false,
+      "pattern": "</?(?:antml:[a-z_]+|antThinking|thinking)\\b[^>\\n]*>",
+      "params": { "vendor": "claude" },
+      "examples": {
+        "positive": ["<thinking>Check the dates first.</thinking> The window is 43 hours."],
+        "negative": ["The window is 43 hours. Thinking about the dates first would have caught it."]
+      }
+    },
+    {
+      "id": "artifact.tool-call-markup",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Agent tool-call markup leaked into prose: <function_calls>, <invoke>, <tool_call>, <tool_use>, <tool_result>.",
+      "source_citation": "Wikipedia:Signs of AI writing § Internal formatting and reference markup bugs; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": false,
+      "pattern": "</?(?:function_calls|invoke|tool_call|tool_use|tool_result)\\b[^>\\n]*>",
+      "params": { "vendor": "tool-harness" },
+      "examples": {
+        "positive": ["<tool_call>search(\"antv npm\")</tool_call> The registry confirms 640 versions."],
+        "negative": ["The registry confirms 640 versions; the search query is in appendix B."]
+      }
+    },
+    {
+      "id": "artifact.thought-duration",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Thinking-UI chrome copied along with the answer: 'Thought for 14 seconds', 'Reasoned about the timeline', 'Reasoned for 8s'. ChatGPT o-series / GPT-5 thinking and Claude extended thinking both render this line above the reply.",
+      "source_citation": "stopslop 2.1 observed corpus (ChatGPT thinking UI, Claude extended thinking UI)",
+      "never_sufficient_alone": false,
+      "pattern": "\\bThought for \\d+ ?(?:seconds?|s|minutes?|m)\\b|\\bReasoned (?:about \\w|for \\d+ ?(?:seconds?|s|minutes?|m))\\b",
+      "params": { "vendor": "reasoning-ui" },
+      "examples": {
+        "positive": ["Thought for 14 seconds\n\nThe campaign began in June."],
+        "negative": ["The team thought for a week about disclosure timing before publishing in June."]
+      }
+    },
+    {
+      "id": "artifact.chatgpt-transcript-label",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "ChatGPT web transcript labels ('ChatGPT said:', 'You said:') copied into the document with the answer.",
+      "source_citation": "stopslop 2.1 observed corpus (ChatGPT share/copy format)",
+      "never_sufficient_alone": false,
+      "pattern": "(?m:^(?:ChatGPT|You) said:[ \\t]*$)",
+      "params": { "vendor": "chatgpt" },
+      "examples": {
+        "positive": ["You said:\nsummarize the report\n\nChatGPT said:\nThe campaign began in June."],
+        "negative": ["The vendor said the campaign began in June, and the registry timestamps agree."]
+      }
+    },
+    {
+      "id": "artifact.copilot-transcript-label",
+      "layer": 1,
+      "category": "tool-artifacts",
+      "tier": 1,
+      "weight": 3.0,
+      "description": "Microsoft Copilot transcript labels ('Copilot said:') copied into the document.",
+      "source_citation": "stopslop 2.1 observed corpus (Copilot copy format)",
+      "never_sufficient_alone": false,
+      "pattern": "(?m:^Copilot said:[ \\t]*$)",
+      "params": { "vendor": "copilot" },
+      "examples": {
+        "positive": ["Copilot said:\nThe campaign began in June."],
+        "negative": ["Copilot telemetry, per Microsoft, first saw the loader in June."]
       }
     }
   ]

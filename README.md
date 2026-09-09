@@ -52,12 +52,39 @@ Deterministic: no network, no API key, no LLM. Same input, same output, forever.
 
 Scoring is tiered, density-normalized, and uncapped:
 
-- **Tier 1, mechanical artifacts** (tool markup like `oai_citation`, `turn0search0`, `[cite: N]`, lenticular brackets, `utm_source=chatgpt.com`; placeholder leakage; chat correspondence). Near-conclusive alone, counted absolutely.
-- **Tier 2, structural** (negative parallelism, copulative avoidance, rule-of-three density, formatting habits). Needs clustering before it counts.
+- **Tier 1, mechanical artifacts** (tool markup like `oai_citation`, `turn0search0`, `[cite: N]`, lenticular brackets, `<think>`, `<thinking>`, `<tool_call>`, `utm_source=chatgpt.com`, thinking-UI chrome like "Thought for 14 seconds", transcript labels like "ChatGPT said:"; placeholder leakage; chat correspondence and sycophancy). Near-conclusive alone, counted absolutely.
+- **Tier 2, structural and register** (negative parallelism, copulative avoidance, rule-of-three density, formatting habits, and the 2025-2026 conversational register below). Needs clustering before it counts.
 - **Tier 3, lexical** (era-bucketed vocabulary). Needs both density and co-occurrence; one hit never scores.
 - **Negative evidence** (signs of human writing: plain copulas, plain verbs, superlatives, hedging, wordy constructions) subtracts, and can never explain away tier 1.
 
 Output is a model-era estimate with confidence bands, a per-category density table, and offset-bearing findings. Humans detect AI text at roughly chance, heavy LLM users hit about 90%, and detector tools have non-trivial error rates; confidence reporting reflects that, and absence of signal is never reported as evidence of human authorship.
+
+#### The 2025-2026 conversational register
+
+The original rule packs fingerprint the 2023-2024 register: `delve`, `tapestry`, `stands as a testament`, `In today's ever-evolving threat landscape`. Current chat models mostly stopped writing that way. They write like a confident blogger instead, and `rules/layer1_narrative.json` scores that register as a fingerprint in its own right:
+
+| Category | What it catches |
+|---|---|
+| `performed-candor` | "One thing I won't hide", "I'll be honest", "let me be direct", "the honest answer is", "worth stating plainly", a bare "Honestly?" |
+| `payoff-hooks` | "here's the thing", "here's the kicker", "the best part?", "here's where it gets interesting", "let that sink in", "full stop" |
+| `rhetorical-qa` | "The catch? It only runs on Linux.", "Why does this matter? Because...", "Does this work? Absolutely." |
+| `colon-fragments` | "Translation:", "Bottom line:", "The result:", "TL;DR:", "Better posed:" |
+| `sycophancy` | "You're absolutely right", "Great question", "You're not imagining it" (tier 1: it is a reply to someone who is not the reader) |
+| `chat-offers` | "Want me to...?", "If you'd like, I can", "Just say the word" (tier 1) |
+| `reasoning-leakage` | "Wait, actually", "let me double-check", "on second thought", leaked `**Reasoning:**` labels |
+| `hortatives` | "let's dive in", "let's unpack", "picture this", "buckle up" |
+| `conversational-register` | "That said,", "Which brings me to", "Crucially,", "Ultimately,", "The reality is" |
+| `negative-parallelism` | 2026 variants: "not because X, but because Y", "less about X and more about Y", "This isn't X. This is Y." |
+| `staccato` | "No fluff. No filler. Just results.", "Not a detail. A design decision.", dash-appended tails like "— and that's the point" |
+| `payoff-hooks` (recentering) | "the real question", "what actually happened", "the part most people miss" |
+| `signposting` | "In this post we'll", "More on that below", "As we'll see", "This is where X comes in" |
+| `second-person` | "What you're describing is", "If you're reading this", "You might be thinking" |
+
+Two new era buckets go with it. `chat2026` is called from the register categories plus a 2025-2026 word list (`genuinely`, `nuanced`, `deceptively simple`, `heavy lifting`, `quiet confidence`), and needs five hits across two distinct categories before it fires, because one "That said," is a human with a blog voice. `claude` is the per-model bucket the guide's *Differences between LLMs* section calls for, anchored on `load-bearing`, the strongest quantified tell in the literature: 929 occurrences inside the Claude-authored cluster of a 461k-pull-request corpus against 82 outside it.
+
+Domain collisions are excluded on purpose. `beacon`, `surface` as a verb, `realm`, `unlock`, `harness`, and `elevate` are ordinary SOC vocabulary and never score; structured analyst labels (`Hypothesis:`, `Method:`, `Scope:`, `Recommendation:`) are excluded from the colon-fragment rule; "in the interest of full disclosure" is excluded from performed candor, because in security writing it introduces a real conflict-of-interest statement. `tests/test_narrative_register.py` carries ten probes of ordinary analyst prose that must score exactly zero, and they are the real specification for this pack.
+
+Register is a weaker signal than markup, and it is the easiest thing in the tool to edit around: every phrase here is publicly catalogued, so one editing pass strips them. That is the guide's own warning, and it is why these rules are tier 2 and 3, gated by clustering, and why layer 2 stays the product.
 
 ### Layer 2: analytic rigor
 
@@ -112,6 +139,8 @@ mypy                   # --strict over core/, configured in pyproject.toml
 ```
 
 The golden pair lives in `tests/fixtures/`: `mini-shai-hulud/` (a gap-laden writeup the tool must pick apart) and `well-sourced/` (the same incident with every gap closed, which must come back clean). If the tool can't tell them apart, it doesn't work, and CI checks exactly that.
+
+`tests/fixtures/corpus/` holds the layer-1 corpus: `fixture-slop.md` (2023-2024 slop, annotated in `fixture-annotations.md`), `fixture-clean.md` (the human control), and `fixture-narrative.md` (the same incident in 2025-2026 chat register, annotated in `fixture-narrative-annotations.md`). The narrative fixture reads as era `none`, net 0.0 against the v2.0 rule set and `chat2026`, confidence high against 2.1: that delta is the miss this pack closes. The CI gate asserts both directions, including that the human control still scores exactly 0.0 once the register rules ship.
 
 ## License
 

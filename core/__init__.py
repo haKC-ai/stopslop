@@ -6,6 +6,6 @@ are supporting signals only. Layer 2 analytic rigor is the product. No layer
 emits a verdict on its own, and nothing in this package emits a slop boolean.
 """
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 USER_AGENT = f"stopslop/{__version__} (+https://github.com/haKC-ai/stopslop)"

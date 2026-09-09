@@ -26,10 +26,36 @@ _ERA_BUCKET_CATEGORIES = {
     "vocab-era-gpt4o": "gpt4o",
     "vocab-era-gpt5": "gpt5",
     "vocab-era-grok": "grok",
+    "vocab-era-chat2026": "chat2026",
+    "vocab-era-claude": "claude",
 }
+
+# The 2025-2026 chat-model register (Claude 4.x, GPT-5, Gemini 3) is a
+# pattern-level fingerprint, not just a word list: performed candor, payoff
+# hooks, self-interview questions, staccato fragments. Those tier-2 and tier-3
+# categories feed the chat2026 bucket alongside its vocabulary.
+_ERA_PATTERN_CATEGORIES = {
+    "performed-candor": "chat2026",
+    "payoff-hooks": "chat2026",
+    "rhetorical-qa": "chat2026",
+    "colon-fragments": "chat2026",
+    "reasoning-leakage": "chat2026",
+    "hortatives": "chat2026",
+    "staccato": "chat2026",
+    "second-person": "chat2026",
+    "signposting": "chat2026",
+    "conversational-register": "chat2026",
+}
+
+_ALL_ERAS = ("gpt4", "gpt4o", "gpt5", "grok", "chat2026", "claude")
 
 _MATERIAL_MIN_HITS = 3
 _MATERIAL_MIN_DENSITY = 1.0  # hits per 1000 words
+# chat2026 aggregates a dozen rules, so it needs more than three hits and more
+# than one category before it is called: two "That said," and one "genuinely"
+# is a human with a blog voice, not a model.
+_CHAT2026_MIN_HITS = 5
+_CHAT2026_MIN_CATEGORIES = 2
 
 _CAVEATS = [
     "Lexical and structural signs point at a problem; they are not the problem. "
@@ -87,10 +113,14 @@ def _normalize_term(text: str) -> str:
     return _NORM_RE.sub("", text.lower()).strip()
 
 
+def _era_for(category: str) -> str | None:
+    return _ERA_BUCKET_CATEGORIES.get(category) or _ERA_PATTERN_CATEGORIES.get(category)
+
+
 def _bucket_terms(findings: Sequence[Finding]) -> dict[str, set[str]]:
-    terms: dict[str, set[str]] = {era: set() for era in _ERA_BUCKET_CATEGORIES.values()}
+    terms: dict[str, set[str]] = {era: set() for era in _ALL_ERAS}
     for f in findings:
-        era = _ERA_BUCKET_CATEGORIES.get(f.category)
+        era = _era_for(f.category)
         if era is None:
             continue
         for span in f.spans:
@@ -99,12 +129,16 @@ def _bucket_terms(findings: Sequence[Finding]) -> dict[str, set[str]]:
 
 
 def _bucket_hits(findings: Sequence[Finding]) -> dict[str, int]:
-    hits: dict[str, int] = dict.fromkeys(_ERA_BUCKET_CATEGORIES.values(), 0)
+    hits: dict[str, int] = dict.fromkeys(_ALL_ERAS, 0)
     for f in findings:
-        era = _ERA_BUCKET_CATEGORIES.get(f.category)
+        era = _era_for(f.category)
         if era is not None:
             hits[era] += f.hits
     return hits
+
+
+def _chat2026_categories(findings: Sequence[Finding]) -> set[str]:
+    return {f.category for f in findings if _era_for(f.category) == "chat2026" and f.hits > 0}
 
 
 def estimate_era(findings: Sequence[Finding], words: int) -> EraEstimate:
@@ -114,26 +148,40 @@ def estimate_era(findings: Sequence[Finding], words: int) -> EraEstimate:
 
     # Distinctive terms disambiguate the overlapping guide lists. GPT-5's list
     # is a narrowed subset of GPT-4o's, so gpt5 is only called when the
-    # narrowed set fires without any earlier-era distinctive terms.
+    # narrowed set fires without any earlier-era distinctive terms. The
+    # chat2026 register is disjoint vocabulary, so it is distinctive whenever
+    # it fires; GPT-5 itself produces that register, so chat2026 subsumes a
+    # gpt5 call instead of pairing with it as "mixed".
     distinctive = {
         "gpt4": terms["gpt4"] - terms["gpt4o"] - terms["gpt5"] - terms["grok"],
         "gpt4o": terms["gpt4o"] - terms["gpt4"] - terms["gpt5"] - terms["grok"],
         "grok": terms["grok"] - terms["gpt4"] - terms["gpt4o"],
+        "chat2026": terms["chat2026"] - terms["gpt4"] - terms["gpt4o"] - terms["gpt5"] - terms["grok"],
+        "claude": terms["claude"] - terms["gpt4"] - terms["gpt4o"] - terms["gpt5"] - terms["grok"],
     }
 
     material = {
         era
-        for era in ("gpt4", "gpt4o", "grok")
+        for era in ("gpt4", "gpt4o", "grok", "claude")
         if hits[era] >= _MATERIAL_MIN_HITS
         and densities[era] >= _MATERIAL_MIN_DENSITY
         and distinctive[era]
     }
+    chat2026_candidate = (
+        hits["chat2026"] >= _CHAT2026_MIN_HITS
+        and densities["chat2026"] >= _MATERIAL_MIN_DENSITY
+        and len(_chat2026_categories(findings)) >= _CHAT2026_MIN_CATEGORIES
+        and bool(distinctive["chat2026"])
+    )
+    if chat2026_candidate:
+        material.add("chat2026")
     gpt5_candidate = (
         hits["gpt5"] >= _MATERIAL_MIN_HITS
         and densities["gpt5"] >= _MATERIAL_MIN_DENSITY
         and not distinctive["gpt4"]
         and not distinctive["gpt4o"]
         and not distinctive["grok"]
+        and not chat2026_candidate
     )
     if gpt5_candidate:
         material.add("gpt5")
@@ -152,7 +200,10 @@ def estimate_era(findings: Sequence[Finding], words: int) -> EraEstimate:
         era = "none"
     elif len(material) == 1:
         era = next(iter(material))
-        rationale.append(f"{era} vocabulary bucket material (distinctive terms: "
+        bucket = "conversational-register bucket" if era == "chat2026" else "vocabulary bucket"
+        if era == "claude":
+            bucket = "per-model vocabulary bucket"
+        rationale.append(f"{era} {bucket} material (distinctive terms: "
                          f"{', '.join(sorted(distinctive.get(era, set()) or terms[era]))})")
     else:
         era = "mixed"

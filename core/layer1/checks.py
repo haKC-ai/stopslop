@@ -27,6 +27,8 @@ _PLAIN_VERB_RE = re.compile(
 )
 _BOLD_RUN_RE = re.compile(r"\*\*[^*\n]+\*\*")
 _HEADING_RE = re.compile(r"^(#{1,6})[ \t]+(.+)$", re.MULTILINE)
+_H1_RE = re.compile(r"^#[ \t]+\S.*$", re.MULTILINE)
+_EM_DASH_RE = re.compile("—")
 _ADJ_SUFFIX = r"(?:ive|ous|ent|ant|ful|ic|al|ing|ed|able|ible|ary|less|ate|id)"
 _TRIPLET_RE = re.compile(
     rf"\b([A-Za-z-]{{4,}}{_ADJ_SUFFIX}),\s+([A-Za-z-]{{3,}}),?\s+and\s+([A-Za-z-]{{4,}}{_ADJ_SUFFIX})\b"
@@ -168,6 +170,32 @@ def reference_plurality(text: str, rule: Rule) -> Finding | None:
     return make_finding(rule, _spans_from_matches(claims), details)
 
 
+def em_dash_density(text: str, rule: Rule) -> Finding | None:
+    """Wikipedia:Signs of AI writing, "Overuse of em dashes".
+
+    Rate of all em dashes per 1000 words, spaced or not. The spaced form is
+    scored on its own as a typographic tell; this catches the unspaced habit
+    that contemporary models kept. Density-gated because editors use them too.
+    """
+    matches = list(_EM_DASH_RE.finditer(text))
+    words = word_count(text)
+    density = per_1000_words(len(matches), words)
+    threshold = float(rule.params.get("density_threshold", 2.0))
+    min_hits = int(rule.params.get("min_hits", 3))
+    if len(matches) < min_hits or density < threshold:
+        return None
+    return make_finding(rule, _spans_from_matches(matches, 20), f"{len(matches)} em dashes, {density}/1000 words")
+
+
+def h1_count(text: str, rule: Rule) -> Finding | None:
+    """Wikipedia:Signs of AI writing, "Overuse of level 1 headings"."""
+    matches = list(_H1_RE.finditer(text))
+    min_hits = int(rule.params.get("min_hits", 2))
+    if len(matches) < min_hits:
+        return None
+    return make_finding(rule, _spans_from_matches(matches), f"{len(matches)} level-1 headings")
+
+
 CHECKS: dict[str, CheckFn] = {
     "copulative_ratio": copulative_ratio,
     "plain_copula_density": plain_copula_density,
@@ -177,4 +205,6 @@ CHECKS: dict[str, CheckFn] = {
     "heading_level_skip": heading_level_skip,
     "title_case_headings": title_case_headings,
     "reference_plurality": reference_plurality,
+    "em_dash_density": em_dash_density,
+    "h1_count": h1_count,
 }

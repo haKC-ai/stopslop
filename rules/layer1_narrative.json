@@ -1,0 +1,255 @@
+{
+  "version": "2.1",
+  "rules": [
+    {
+      "id": "narrative.performed-candor",
+      "layer": 1,
+      "category": "performed-candor",
+      "tier": 2,
+      "weight": 0.7,
+      "description": "Performed candor: the 2025-2026 chat-model habit of announcing honesty before saying something ordinary. 'One thing I won't hide', 'I'll be honest', 'let me be direct', 'the honest answer is', 'honest take', 'Honest caveat:', 'worth stating plainly', 'here's where I'd push back', 'I want to be careful here', 'not gonna lie', 'full transparency', 'the uncomfortable truth', 'say the quiet part out loud', a sentence-initial 'Honestly?'. Analysts state findings; they do not preface them with a sincerity claim. Tier 2: needs clustering, one instance is ordinary prose. 'In the interest of full disclosure' is excluded: in security writing that phrase precedes a real conflict-of-interest statement.",
+      "source_citation": "Forbes, The 15 new giveaway signs of AI-generated content (2026-02-03): 'Honestly?', 'I'm going to state this as clearly as possible'; Polytranslator, Claude-speak: 'the honest answer is'; Ivo Velitchkov, 22 Claude Cliches (2026-06-25): 'the honest answer', 'Better posed:'; Robitza, The one thing I hate about Claude (2026-06-22): 'Honest caveat:'; conorbronsdon/avoid-ai-writing SKILL.md: 'narrated candor'",
+      "never_sufficient_alone": true,
+      "pattern": "\\b(?:one thing I (?:won[’']t|will not|can[’']t) (?:hide|sugarcoat|sugar-coat|pretend|ignore|gloss over|dodge)|I (?:won[’']t|will not|am not going to|[’']m not going to|[’']m not gonna) (?:sugarcoat|sugar-coat|pretend|lie|hide|bury the lede|dress (?:this|it) up|dance around)|not gonna lie|I[’']d be lying if|(?:I[’']ll|let me|I want to|I[’']m going to|I have to|I need to|allow me to) be (?:honest|direct|blunt|frank|clear|upfront|real|transparent|candid|straight)(?: with you| here)?|the honest (?:answer|truth|take|assessment|version|framing)|honest (?:take|caveat|framing):|full transparency|in the interest of (?:transparency|honesty|candor)|cards on the table|no sugarcoating|no sugar-coating|real talk|let[’']s (?:be (?:honest|real|clear|frank|blunt)|not (?:pretend|kid ourselves|sugarcoat)|call it what it is)|the (?:uncomfortable|hard|inconvenient|brutal|plain|unvarnished) truth|say the quiet part out loud|the quiet part|hot take|unpopular opinion|I[’']ll say it plainly|to put it bluntly|I[’']m going to state this as clearly as possible|worth (?:stating|saying) plainly|stated fairly|here[’']s where I[’']d push back|I want to be careful here|that[’']s not filler|and yet, honestly, no)\\b|(?:^|(?<=\\n)|(?<=[.!?]\\s))Honestly\\?",
+      "flags": "i",
+      "examples": {
+        "positive": ["Honestly? One thing I won't hide: the attribution is thin. Let me be direct, the honest answer is nobody knows. Worth stating plainly, here's where I'd push back."],
+        "negative": ["Attribution is thin. The stated basis is targeting overlap, which is not attribution evidence. In the interest of full disclosure, the author holds equity in the vendor."]
+      }
+    },
+    {
+      "id": "narrative.payoff-hooks",
+      "layer": 1,
+      "category": "payoff-hooks",
+      "tier": 2,
+      "weight": 0.6,
+      "description": "Payoff hooks that promise a reveal: 'here's the thing', 'here's the kicker', 'the best part?', 'here's where it gets interesting', 'here's what nobody tells you', 'what if I told you', 'plot twist:', 'let that sink in', 'read that again', 'this changes everything', a standalone 'Full stop.' or 'Period.', 'that's the whole game'. The setup-then-reveal cadence is a chat-register tell; the reveal is usually a restatement.",
+      "source_citation": "Forbes, The 15 new giveaway signs of AI-generated content (2026-02-03): 'Here's the kicker', 'The best part?', 'But here's the thing', 'Here's the part most people miss', 'Here's the breakdown'; claudisms.ai: 'Here's where it gets interesting', 'that's the whole game'; AIPromptIndex, 19 patterns that make writing sound like ChatGPT: 'here's what nobody tells you', 'what if I told you', 'plot twist:'",
+      "never_sufficient_alone": true,
+      "pattern": "\\bhere[’']s the (?:thing|kicker|catch|twist|rub|deal|breakdown|short version|bottom line|part (?:most people|nobody|no one) (?:miss|misses|talks? about|mentions?|tells? you)|thing nobody tells you)\\b|\\bhere[’']s (?:what|why|where|how) (?:it gets interesting|it matters|that matters|this matters|I[’']d|you should|to do|most people|nobody tells you|no one tells you)\\b|\\bthe (?:best|worst) part\\?|\\bthe (?:kicker|catch|twist|rub|upshot|punchline)\\?|\\bplot twist:|\\bspoiler(?: alert)?:|\\blet that sink in\\b|\\bread that again\\b|\\bsit with that\\b|\\bworth sitting with\\b|(?<=[.!?]\\s)(?:Full stop|Period)\\.|\\bthat[’']s (?:it|the whole (?:game|point|story|thing|ballgame))\\.|\\bnothing more, nothing less\\b|\\bsimple as that\\b|\\bnet-net\\b|\\bwhat if I told you\\b|\\bthis changes everything\\b|\\bhere[’']s where it gets\\b|\\bit has a name\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Here's the thing: the token count is containment. The best part? Nobody checked. Here's where it gets interesting. Let that sink in. Full stop."],
+        "negative": ["The token count is a containment figure. Nobody has published a victim count."]
+      }
+    },
+    {
+      "id": "narrative.rhetorical-qa",
+      "layer": 1,
+      "category": "rhetorical-qa",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Rhetorical question answered by the next sentence: 'The catch? It only runs on Linux.', 'Why does this matter? Because...', 'Sound familiar?', 'Does this work? Absolutely.', 'So what does this mean?'. A self-interview cadence; analytic writing asks questions it intends to leave open, not ones it answers in the same breath.",
+      "source_citation": "Forbes, The 15 new giveaway signs of AI-generated content (2026-02-03): 'The best part?'; SlopDetector, Signs of AI writing, 12 patterns with reproducible thresholds (2026): 'The result?'; AIPromptIndex, 19 patterns: 'Does this work? Absolutely.'",
+      "never_sufficient_alone": true,
+      "pattern": "\\bThe (?:catch|problem|result|fix|twist|kicker|reason|answer|difference|irony|cost|downside|upside|good news|bad news|best part|worst part|lesson|takeaway|goal|verdict|short version)\\?\\s+[A-Z]|\\bSound familiar\\?|\\bWhy(?: does (?:this|that) matter)?\\?\\s+(?:Because|Simple|Two reasons|Three reasons)|\\bThe answer\\?|\\bWhat does (?:this|that) mean\\?|\\bSo what(?:[’']s| is)? (?:the takeaway|does this mean|now|changed)\\?|\\bWhat changed\\?|\\bWhat[’']s the (?:catch|takeaway|lesson|fix)\\?|\\b(?:Does|Did|Do|Is|Was|Can|Will) (?:this|that|it|they) \\w+[^?\\n]{0,40}\\?\\s+(?:Absolutely|Yes|No|Nope|Sort of|Kind of|Not quite|Not really)\\b",
+      "examples": {
+        "positive": ["The catch? It only runs on Linux. Why does this matter? Because the gate decides the victim set. Does this work? Absolutely. Sound familiar?"],
+        "negative": ["It only runs on Linux. The gate decides the victim set, which is why the download count overstates reach."]
+      }
+    },
+    {
+      "id": "narrative.colon-fragments",
+      "layer": 1,
+      "category": "colon-fragments",
+      "tier": 2,
+      "weight": 0.4,
+      "description": "Sentence-initial label fragments with a colon: 'Translation:', 'Bottom line:', 'The result:', 'The fix:', 'Short answer:', 'TL;DR:', 'Reality check:', 'Zoom out:', 'Better posed:', 'What holds up:', including bold and bulleted forms. Structured analyst labels ('Hypothesis:', 'Method:', 'Scope:', 'Findings:', 'Recommendation:') are deliberately excluded, as is any label inside a table row.",
+      "source_citation": "Forbes, The 15 new giveaway signs of AI-generated content (2026-02-03): 'Here's the breakdown'; Ivo Velitchkov, 22 Claude Cliches (2026-06-25): 'Better posed:'; Robitza, The one thing I hate about Claude (2026-06-22): 'What holds up: / What was wrong:'; Blake Stockton, Colons, colons everywhere (2026)",
+      "never_sufficient_alone": true,
+      "pattern": "(?:^|(?<=\\n)|(?<=\\n- )|(?<=\\n\\* )|(?<=[.!?]\\s))(?:\\*\\*)?(?:The (?:result|problem|catch|kicker|upshot|takeaway|bottom line|goal|fix|answer|reality|truth|good news|bad news|lesson|verdict|difference|irony|twist|short version|long version|real (?:problem|question|issue|risk|kicker)|actual (?:problem|question|issue|risk)|tell|move|play|(?:big|bigger) (?:question|picture|problem))|Translation|Bottom line|Reality check|Spoiler|Plot twist|Pro tip|Fun fact|Side note|Quick note|Hot take|Real talk|TL;DR|Net-net|Upshot|Key takeaway|Short version|Long version|Short answer|Long answer|Zoom out|Big picture|Better posed|What holds up|What was wrong|Worse|Better|Best part|Worst part)(?:\\*\\*)?\\s*:",
+      "examples": {
+        "positive": ["Translation: the number is containment. Bottom line: nobody measured reach.\n- **The fix:** stop citing it."],
+        "negative": ["Hypothesis: the resolver layer is enumerable.\nMethod: poll the six surfaces on the worm's cadence.\nRecommendation: hunt the surfaces."]
+      }
+    },
+    {
+      "id": "narrative.sycophancy",
+      "layer": 1,
+      "category": "correspondence-leakage",
+      "tier": 1,
+      "weight": 2.0,
+      "description": "Chat-directed validation leaked into a document: 'You're absolutely right', 'Great question', 'That's a sharp observation', 'You've hit on something important', 'You're not imagining it', 'I understand where you're coming from', and the bare acknowledgement openers 'Perfect!' / 'Absolutely!' on their own line. This is a reply to a person who is not the reader; mechanical leakage like the guide's 'I hope this helps'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Communication intended for the user; anthropics/claude-code issue #3382, 'Claude says You're absolutely right! about everything'; Polytranslator, Claude-speak: 'Great question', 'I understand where you're coming from'; Georgetown Law, Tech brief on AI sycophancy (2025)",
+      "never_sufficient_alone": false,
+      "pattern": "\\b(?:you[’']re (?:absolutely|completely|totally|exactly) right|(?:that[’']s|what) a (?:great|good|fantastic|excellent|fair|sharp|insightful|really good|really interesting|thoughtful) (?:question|point|observation|catch|instinct)|great (?:question|point|catch)|good (?:question|catch)|excellent (?:question|point)|fair point|couldn[’']t agree more|you[’']ve (?:hit on|raised|touched on|identified) (?:something|an? (?:important|key|crucial|real))|you[’']re onto something|you[’']re not imagining it|that[’']s the right instinct|your instinct is (?:right|correct|good)|I understand where you[’']re coming from|I hear you)\\b|(?m:^(?:Perfect|Absolutely|Exactly|Nailed it)[!.]\\s*$)",
+      "flags": "i",
+      "examples": {
+        "positive": ["Great question. You're absolutely right that the token count is containment, and you've hit on something important."],
+        "negative": ["The token count is containment. The report says so in one line and moves on."]
+      }
+    },
+    {
+      "id": "narrative.chat-offers",
+      "layer": 1,
+      "category": "correspondence-leakage",
+      "tier": 1,
+      "weight": 2.0,
+      "description": "Closing offers to the chat user: 'Want me to...?', 'If you'd like, I can', 'If you like, I could', 'Do you want me to', 'Just say the word', 'Happy to expand', 'Hope this helps', 'Feel free to reach out', 'Is there anything else', 'Are you ready to go deeper?'. The 2025-2026 successor to 'Let me know if'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Communication intended for the user; PCWorld, I got ChatGPT to stop its annoying follow-up questions (2026): 'Want me to...?', 'If you like, I could...'; conorbronsdon/avoid-ai-writing SKILL.md: 'Feel free to reach out if you'd like more details'",
+      "never_sufficient_alone": false,
+      "pattern": "\\b(?:want me to\\b|if you(?:[’']d like| like| want| prefer),? I (?:can|could)\\b|do you want me to\\b|should I (?:go ahead|also|draft|dig|expand)\\b|just say the word|happy to (?:help|dig|expand|adjust|elaborate|draft)|I[’']d be happy to\\b|I[’']m happy to\\b|I can also help you\\b|hope (?:this|that) helps|feel free to (?:reach out|ask|let me know)|is there anything else\\b|anything else (?:you|I) (?:need|can|should)\\b|let me know how (?:it goes|that goes|you[’']d like)|(?:are you |ready to )ready to (?:go deeper|dive deeper|dig in))",
+      "flags": "i",
+      "examples": {
+        "positive": ["Want me to turn this into a checklist? If you'd like, I can draft the queries. Feel free to reach out. Just say the word."],
+        "negative": ["The checklist is in appendix B. The queries are in appendix C with their false-positive rates."]
+      }
+    },
+    {
+      "id": "narrative.reasoning-spill",
+      "layer": 1,
+      "category": "reasoning-leakage",
+      "tier": 2,
+      "weight": 0.8,
+      "description": "Reasoning-model chain of thought spilled into the finished text: sentence-initial 'Wait,', 'Hmm,', 'Actually, wait', 'Hold on', plus 'let me double-check', 'on second thought', 'looking at this again', and bold 'Thinking:' / 'Reasoning:' labels. A document does not think out loud.",
+      "source_citation": "PAN 2026 reasoning-trajectory detection task; openai/codex issue #37524, GPT-5.6 leaks literal thinking text as visible assistant output; Wikipedia:Signs of AI writing § Internal formatting and reference markup bugs",
+      "never_sufficient_alone": true,
+      "pattern": "(?:^|(?<=\\n)|(?<=[.!?]\\s))(?:Wait|Hmm+|Actually, wait|Wait, (?:actually|no)|Hold on|Hang on)[,.—–-]|(?i:\\blet me (?:double[- ]check|re-?check|verify that|reconsider|re-read|make sure I|think (?:about this|through this|step by step))\\b|\\bon second thought\\b|\\blooking at this (?:again|more closely)\\b|\\bnow that I (?:look|think) (?:again|more closely|about it)\\b)|\\*\\*(?:Thinking|Reasoning|Thought process)\\*\\*:?|\\[(?:Thinking|Reasoning)\\]",
+      "examples": {
+        "positive": ["Wait, actually — let me double-check the window. Hmm, on second thought the removal time is 09:41."],
+        "negative": ["The removal time is 09:41 UTC per the registry, which gives a 43-hour window."]
+      }
+    },
+    {
+      "id": "narrative.hortatives",
+      "layer": 1,
+      "category": "hortatives",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "First-person-plural hortatives that narrate the document's own progress: 'let's dive in', 'let's unpack', 'let's break this down', 'let's zoom out', 'without further ado', 'buckle up', 'picture this', 'imagine a world'. Explainer-video cadence in an analytic document.",
+      "source_citation": "Olivia Cal, How to spot AI writing tells (2026): 'Let's dive in', 'Picture this...', 'Imagine a world'; Tan Rosado, 10 phrases that scream AI: 'Let's dive in'; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "\\blet[’']s (?:dive (?:in|into|right in)|dig (?:in|into)|unpack|break (?:this|it|that) down|take a (?:closer |step )?(?:look|back)|walk through|get into it|start with|explore|zoom (?:in|out)|not forget|jump (?:in|right in)|get started|cut to the chase|get (?:something|one thing) (?:straight|out of the way))\\b|\\bwithout further ado\\b|\\bbuckle up\\b|\\bstrap in\\b|\\bimagine (?:a world|this|for a moment)\\b|\\bpicture this\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["Let's dive in. Picture this: a preinstall hook. Let's unpack what it does, then let's zoom out."],
+        "negative": ["The preinstall hook spawns a shell. The next section covers what the shell does."]
+      }
+    },
+    {
+      "id": "narrative.conversational-pivots",
+      "layer": 1,
+      "category": "conversational-register",
+      "tier": 3,
+      "weight": 0.12,
+      "description": "Spoken-register pivots at sentence start: 'That said,', 'With that said,', 'The thing is,', 'Look,', 'Which brings me to', 'One caveat', 'Worth flagging', 'Truth be told', 'To be fair', 'FWIW', 'Needless to say'. Formal transitions (however, moreover, therefore) are deliberately excluded: the guide lists transition words in isolation as an ineffective indicator. Tier 3, density-scored only.",
+      "source_citation": "umanwrite, Common AI words and phrases (2026): 'It goes without saying', 'Needless to say'; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "(?:^|(?<=\\n)|(?<=[.!?]\\s))(?:That (?:being )?said|With that said|Having said that|All that said|The thing is|Look|Listen|Which brings (?:me|us) to|That brings (?:me|us) to|Speaking of which|Moving on|One (?:more|last) thing|Quick caveat|One caveat|Worth flagging|Fair warning|Heads up|Truth be told|To be fair|In fairness|For what it[’']s worth|FWIW|Rest assured|Needless to say|It goes without saying)[,:—–]",
+      "examples": {
+        "positive": ["That said, the gate matters. Look, the count is containment. Which brings me to the window. One caveat: the API is public."],
+        "negative": ["The gate matters. The count is containment. The window is reconstructable from the public API."]
+      }
+    },
+    {
+      "id": "narrative.adverbial-openers",
+      "layer": 1,
+      "category": "conversational-register",
+      "tier": 3,
+      "weight": 0.12,
+      "description": "Stance adverbs opening a sentence: 'Importantly,', 'Crucially,', 'Notably,', 'Interestingly,', 'Ultimately,', 'Genuinely,', 'Honestly,', 'Frankly,', 'Fundamentally,', 'Simply put,', 'At the end of the day,', 'The reality is', 'Make no mistake,'. Tier 3, density-scored only; humans use these, models use them every third paragraph.",
+      "source_citation": "Polytranslator, Claude-speak: 'Honestly?', 'Genuinely'; Olivia Cal, How to spot AI writing tells (2026): 'It is important to consider'; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "(?:^|(?<=\\n)|(?<=[.!?]\\s))(?:Importantly|Crucially|Critically|Notably|Interestingly|Ultimately|Genuinely|Honestly|Frankly|Candidly|Realistically|Objectively|Admittedly|Arguably|Fundamentally|Essentially|Unsurprisingly|Simply put|Put simply|At the end of the day|In a nutshell|Make no mistake)[,:]|(?:^|(?<=\\n)|(?<=[.!?]\\s))The (?:reality|truth|fact) is(?:[,:]| that\\b)",
+      "examples": {
+        "positive": ["Crucially, the gate matters. Interestingly, nobody checked. Ultimately, the reality is that the count is containment."],
+        "negative": ["The gate matters. Nobody checked. The count is containment."]
+      }
+    },
+    {
+      "id": "narrative.reframe-contrast",
+      "layer": 1,
+      "category": "negative-parallelism",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "2025-2026 variants of negative parallelism the original rule misses: 'not because X, but because Y', 'less about X and more about Y', 'it isn't about X, it's about Y', 'This isn't X. This is Y.', 'it's not that X; it's that Y', 'you're not X-ing, you're Y-ing', plus the hedged-pivot pairs 'not perfect, but', 'that's not nothing', 'no small feat', 'easier said than done'. Shares the negative-parallelism category so it clusters with the original.",
+      "source_citation": "Wikipedia:Signs of AI writing § Negative parallelisms; GPTZero, AI patterns: 'Not just X, but Y'; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "\\bnot (?:perfect|trivial|nothing|always|a silver bullet|a magic bullet|magic|glamorous|sexy|flashy),? but\\b|\\bthat[’']s not nothing\\b|\\bno small (?:feat|thing|task)\\b|\\beasier said than done\\b|\\bsimple,? but not easy\\b|\\bnot because [^.\\n]{2,60}, but because\\b|\\bless about [^.\\n]{2,40} (?:and )?more about\\b|\\bisn[’']t about [^.\\n]{2,40}[,;] it[’']s about\\b|\\bthis isn[’']t [^.\\n]{2,60}\\. (?:This|It)[’']s\\b|\\bit[’']s not that [^.\\n]{2,50}[,;] it[’']s that\\b|\\byou[’']re not (?:just )?\\w+ing[^.\\n]{0,40}[,;—–-] you[’']re \\w+ing\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["This isn't a supply chain compromise. This is a harvester. Not because the hashes are wrong, but because they expire. It's less about npm and more about CI."],
+        "negative": ["The hashes expire with the next variant. The durable indicators are the install-hook behaviors."]
+      }
+    },
+    {
+      "id": "narrative.staccato-fragments",
+      "layer": 1,
+      "category": "staccato",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Staccato fragment runs, anaphoric triplets, and the two-beat aphoristic ender: 'No fluff. No filler. Just results.', 'Not Microsoft. Not GitHub. Not the maintainers.', 'Every install. Every pipeline. Every day.', three consecutive one-word sentences ('Fast. Cheap. Everywhere.'), and 'Not a detail. A design decision.'. Rhythm engineered for emphasis; the rule of three at sentence level.",
+      "source_citation": "Olivia Cal, How to spot AI writing tells (2026): 'No X. No Y. Just Z.'; explainx.ai, Claude Opus 5 Claudisms (2026-08): 'Not a detail. A design decision.'; Ivo Velitchkov, 22 Claude Cliches: aphoristic 'X, not Y.' ender; Wikipedia:Signs of AI writing § Rule of three",
+      "never_sufficient_alone": true,
+      "pattern": "\\bNo \\w+(?: \\w+)?\\. No \\w+(?: \\w+)?\\. (?:Just|Only) \\w+|\\bNot \\w+(?: \\w+)?\\. Not \\w+(?: \\w+)?\\. \\w+|\\b[A-Z]\\w*\\. [A-Z]\\w*\\. [A-Z]\\w*\\.(?=\\s|$)|(?:^|(?<=[.!?]\\s))((?:It[’']s|They[’']re|This is|That[’']s|No|Not|Every)(?: \\w+)?)\\b[^.!?\\n]{1,50}[.!?] \\1\\b[^.!?\\n]{1,50}[.!?] \\1\\b|(?:^|(?<=[.!?]\\s))Not (?:a|an|the) [\\w-]+(?: [\\w-]+)?\\. (?:A|An|The) [\\w-]+(?: [\\w-]+)?\\.",
+      "examples": {
+        "positive": ["No shell. No exfil. Just a wasted download. Every install. Every pipeline. Every day. Fast. Cheap. Everywhere. Not a detail. A design decision."],
+        "negative": ["Outside a Linux runner the payload does nothing: no shell, no exfiltration, and the download is wasted."]
+      }
+    },
+    {
+      "id": "narrative.emphatic-tails",
+      "layer": 1,
+      "category": "staccato",
+      "tier": 2,
+      "weight": 0.4,
+      "description": "Dash-appended emphatic tails: '— and that's the point', '— full stop', '— period', '— not because', '— and for good reason', '— which is exactly the problem'. The dash must be an em/en dash or a spaced hyphen so compound words ('pre-period', 'ultra-fast') never match.",
+      "source_citation": "Wikipedia:Signs of AI writing § Overuse of em dashes; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "(?:[—–]|\\s-\\s)\\s*(?:and (?:that[’']s (?:the point|a good thing|not nothing|the problem|fine|okay)|it shows|for good reason|fast|rightly so|then some|often)|not because\\b|full stop\\b|period\\b|which is (?:exactly )?the (?:point|problem))",
+      "flags": "i",
+      "examples": {
+        "positive": ["Neither is a victim count — full stop. The hashes expire — not because they're wrong — and that's the point."],
+        "negative": ["Neither is a victim count. The hashes expire because the next build changes them; the pre-period baseline is ultra-fast to rebuild."]
+      }
+    },
+    {
+      "id": "narrative.real-x-recentering",
+      "layer": 1,
+      "category": "payoff-hooks",
+      "tier": 2,
+      "weight": 0.4,
+      "description": "Recentering on 'the real X': 'the real question', 'the actual problem', 'what actually happened', 'what really matters', 'the part most people miss', 'nobody talks about', 'why this matters', 'what this means'. Claims privileged insight without adding evidence. Shares the payoff-hooks category.",
+      "source_citation": "Forbes, The 15 new giveaway signs of AI-generated content (2026-02-03): 'Here's the part most people miss'; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "\\bthe (?:real|actual) (?:question|problem|issue|risk|threat|danger|lesson|win|cost|work|reason|kicker|test|point|challenge|value)\\b|\\bwhat(?:[’']s| is) (?:actually|really) (?:happening|going on|at stake|new|different|interesting)\\b|\\bwhat (?:actually|really) (?:matters|happened)\\b|\\bthe part (?:that (?:matters|actually matters|gets missed|nobody talks about)|(?:most people|nobody|no one) (?:miss|misses|talks? about|mentions?))\\b|\\bthe thing (?:nobody|no one|most people) (?:tells you|talks about|mentions|notices|misses)\\b|\\b(?:most|many) people (?:miss|get this wrong|don[’']t realize|overlook)\\b|\\bnobody (?:talks about|tells you|mentions)\\b|\\bthis (?:matters|is important) because\\b|\\bwhy (?:this|it) matters\\b|\\bwhat this (?:actually |really )?means(?: for you| in practice)?\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["The real question is the runner count. Why this matters: what actually happened is the part most people miss."],
+        "negative": ["The runner count is unpublished. The registry API gives per-version timestamps, so the window is reconstructable."]
+      }
+    },
+    {
+      "id": "narrative.signposting",
+      "layer": 1,
+      "category": "signposting",
+      "tier": 2,
+      "weight": 0.3,
+      "description": "Blog-style signposting of the document's own structure: 'In this post we'll', 'This article breaks down', 'Below, we walk through', 'As we'll see', 'More on that below', 'This is where X comes in', 'Stay tuned', 'Read on to'. A report has sections; it does not trail them.",
+      "source_citation": "Wikipedia:Signs of AI writing § Historical indicators, Section summaries (the predecessor habit); Louis Bouchard, How to clean up AI-generated drafts (2026): 'This is where X comes in'; Ivo Velitchkov, 22 Claude Cliches: 'This matters because'",
+      "never_sufficient_alone": true,
+      "pattern": "\\bin this (?:article|post|piece|guide|write-?up),? (?:we|I|you)\\b|\\bthis (?:article|post|piece|guide) (?:explores|breaks down|walks through|covers|dives into|unpacks)\\b|\\bbelow,? (?:we|I) (?:break down|walk through|explore|cover|outline|lay out)\\b|\\bas we[’']ll see\\b|\\bmore on (?:that|this) (?:later|below|in a moment)\\b|\\bstay tuned\\b|\\bread on(?:\\.|,| to (?:learn|see|find))|\\bwe[’']ll (?:get|come) (?:to|back to) that\\b|\\bthis is where [^.\\n]{2,40} comes in\\b|\\bas mentioned above\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["In this post we'll walk through the chain. More on that below. As we'll see, the gate matters. This is where the sandbox comes in. Stay tuned."],
+        "negative": ["Section 2 covers the chain. Section 3 covers the gate. The loader can read on disk before it runs."]
+      }
+    },
+    {
+      "id": "narrative.second-person-address",
+      "layer": 1,
+      "category": "second-person",
+      "tier": 2,
+      "weight": 0.5,
+      "description": "Addressing an imagined reader mid-analysis: 'What you're describing is', 'If you're reading this', 'You might be thinking', 'I know what you're thinking', 'you've probably', 'if you've ever'. Chat register, not report register.",
+      "source_citation": "Olivia Cal, How to spot AI writing tells (2026): 'As a business owner, you know...'; stopslop 2.1 observed corpus",
+      "never_sufficient_alone": true,
+      "pattern": "\\bwhat you[’']re (?:really |actually )?(?:describing|asking|seeing|looking at|dealing with) is\\b|\\bif you[’']re (?:reading|thinking|wondering|asking)\\b|\\byou might be (?:thinking|wondering|tempted)\\b|\\bI know what you[’']re thinking\\b|\\byou[’']ve probably\\b|\\bif you[’']ve ever\\b|\\byou (?:don[’']t|do not) need me to tell you\\b",
+      "flags": "i",
+      "examples": {
+        "positive": ["If you're reading this, you've probably shipped a preinstall hook. You might be thinking the hashes are enough. I know what you're thinking."],
+        "negative": ["Teams that ship preinstall hooks should test them in a disposable runner. Hashes are not enough."]
+      }
+    }
+  ]
+}

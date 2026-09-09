@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "rules": [
     {
       "id": "format.em-dash-spaced",
@@ -74,6 +74,22 @@
       "examples": {
         "positive": ["text\n\n---\n\n## Next Section\n\nmore"],
         "negative": ["text\n\n## Next Section\n\nmore"]
+      }
+    },
+    {
+      "id": "format.em-dash-density",
+      "layer": 1,
+      "category": "em-dash-density",
+      "tier": 3,
+      "weight": 0.15,
+      "description": "Em-dash rate per 1000 words, spaced or unspaced. The spaced form is scored separately as a typographic tell; this is the raw rate, which the guide notes contemporary models kept while shedding other habits (its cited July 2026 study found only Claude still above the human rate). Journalists and editors use em dashes heavily, so this is tier 3, density-gated, and near-weightless alone.",
+      "source_citation": "Wikipedia:Signs of AI writing § Overuse of em dashes",
+      "never_sufficient_alone": true,
+      "check": "em_dash_density",
+      "params": { "density_threshold": 2.0, "min_hits": 3 },
+      "examples": {
+        "positive": ["The payload—a 499 KB blob—overwrites index.js. It gates hard—Linux runners only—and installs Bun if it must."],
+        "negative": ["The payload, a 499 KB blob, overwrites index.js. It gates hard: Linux runners only. It installs Bun if it must."]
       }
     }
   ]

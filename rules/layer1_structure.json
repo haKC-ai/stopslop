@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "rules": [
     {
       "id": "structure.copulative-avoidance",
@@ -94,6 +94,22 @@
       "examples": {
         "positive": ["## Analysis And Assessment\n\ntext"],
         "negative": ["## Analysis and assessment\n\ntext"]
+      }
+    },
+    {
+      "id": "structure.h1-overuse",
+      "layer": 1,
+      "category": "formatting",
+      "tier": 2,
+      "weight": 0.3,
+      "description": "More than one level-1 heading in a document. A document has one title; LLM output promotes every section to '#'.",
+      "source_citation": "Wikipedia:Signs of AI writing § Overuse of level 1 headings",
+      "never_sufficient_alone": true,
+      "check": "h1_count",
+      "params": { "min_hits": 2 },
+      "examples": {
+        "positive": ["# Title\n\ntext\n\n# Findings\n\ntext\n\n# Closing thoughts\n\ntext"],
+        "negative": ["# Title\n\ntext\n\n## Findings\n\ntext\n\n## Closing\n\ntext"]
       }
     }
   ]

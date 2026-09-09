@@ -31,6 +31,8 @@ def main() -> int:
         tmp = pathlib.Path(td)
         mini = run_cli(ROOT / "tests/fixtures/mini-shai-hulud/source.md", tmp / "mini.json")
         well = run_cli(ROOT / "tests/fixtures/well-sourced/source.md", tmp / "well.json")
+        narrative = run_cli(ROOT / "tests/fixtures/corpus/fixture-narrative.md", tmp / "narrative.json")
+        clean = run_cli(ROOT / "tests/fixtures/corpus/fixture-clean.md", tmp / "clean.json")
 
     expected = json.loads(
         (ROOT / "tests/fixtures/mini-shai-hulud/expected_gaps.json").read_text(encoding="utf-8")
@@ -51,13 +53,29 @@ def main() -> int:
         print(f"FAIL: well-sourced fixture is not clean: {well_missed}")
         return 1
 
-    for report, name in ((mini, "mini"), (well, "well")):
+    for report, name in ((mini, "mini"), (well, "well"), (narrative, "narrative"), (clean, "clean")):
         flat = json.dumps(report)
         if "is_slop" in flat:
             print(f"FAIL: {name} report contains a verdict boolean")
             return 1
 
-    print(f"OK: mini surfaces {len(mini['rigor']['gaps'])} gaps, well-sourced surfaces 0.")
+    # The 2025-2026 conversational register pair: the chat-register writeup must
+    # be called, and the human-written control must not move because of it.
+    narrative_era = narrative["fingerprint"]["era_estimate"]
+    if narrative_era["era"] != "chat2026":
+        print(f"FAIL: narrative fixture era is {narrative_era['era']!r}, expected 'chat2026'")
+        return 1
+    if clean["fingerprint"]["score"]["net"] != 0.0:
+        print(f"FAIL: register rules taxed the human control (net {clean['fingerprint']['score']['net']})")
+        return 1
+    if clean["fingerprint"]["era_estimate"]["era"] != "none":
+        print("FAIL: human control got an era call")
+        return 1
+
+    print(
+        f"OK: mini surfaces {len(mini['rigor']['gaps'])} gaps, well-sourced surfaces 0, "
+        f"narrative reads {narrative_era['era']}, human control stays at 0."
+    )
     return 0
 
 

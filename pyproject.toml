@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stopslop"
-version = "2.0.0"
+version = "2.1.0"
 description = "Analytic-rigor scorer for threat intelligence writing"
 readme = "README.md"
 requires-python = ">=3.11"
