@@ -77,3 +77,8 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+# The test modules import `tests.conftest`, but only `core*` is installed, so
+# the repo root has to be on sys.path explicitly. It happens to be there in a
+# stale local venv (easy-install.pth from an older setuptools develop install),
+# which is why this passed locally and failed in CI on a clean install.
+pythonpath = ["."]
