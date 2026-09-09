@@ -130,6 +130,27 @@ Environment variables (see `.env.example`): `ANTHROPIC_API_KEY` / `OPENAI_API_KE
 
 URL fetching keeps the SSRF guard and re-checks every redirect hop before following it. Timeouts everywhere, JSON-only model outputs, no code execution. Known limit: DNS rebinding between check and request is out of scope.
 
+## Rule drift
+
+Rules decay. The guide they cite is edited close to daily, and the models they fingerprint ship new habits every few months. `scripts/watch_sources.py` is the patrol:
+
+```bash
+python scripts/watch_sources.py              # exit 0 clean, 1 drift, 2 could not check
+python scripts/watch_sources.py --update-pin # re-pin after reviewing
+```
+
+It derives what to watch from the rule set itself. Every rule's `source_citation` names a guide section, so the sections the packs depend on are computed from `rules/*.json` rather than maintained by hand, and three things get reported:
+
+- **STALE** a rule cites a section that no longer exists under that name, with the closest live section as a suggestion
+- **UNCOVERED** the guide has a scoreable section no rule cites. Subsections inherit coverage from a cited parent, and Wikipedia-editing sections (broken wikitext, AfC drafts, canned user pages) are listed as out of scope in the script, so an entry here is a decision rather than an oversight
+- **DRIFT** a cited section's wikitext changed since the pinned revision in `.rule-sources.json`
+
+Watching the page as a whole would produce a false alarm every day and get muted inside a week, so only cited sections are diffed, each hashed across its own subsections, against a revision a human re-pins after review. One API call for the section list, one for the wikitext; no LLM and no judgement anywhere in it.
+
+`.github/workflows/rule-drift.yml` runs it weekly and keeps a single `rule-drift` issue updated in place, closing it when the tree comes back clean. `tests/test_source_pin.py` is the offline half: it fails if a rule cites a section the pin doesn't cover, which is the realistic mistake.
+
+The first run found 13 stale citations. The guide had renamed *Vague attributions of opinion* to *Vague attributions and overgeneralization of opinions*, *Horizontal rules* to *Thematic breaks between sections*, *Section headings* to *Skipping heading levels*, *Emoji* to *Emoji as formatting*, folded the four *Words overused by AI* buckets into *High density of "AI vocabulary" words*, and absorbed *turn0search0* into *Internal formatting and reference markup bugs*. Those are fixed; the patrol exists so the next round gets caught in a week instead of a year.
+
 ## Development
 
 ```bash

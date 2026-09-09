@@ -40,7 +40,7 @@
       "tier": 2,
       "weight": 0.8,
       "description": "Cross-check: plural sourcing claims ('several sources', 'experts argue') against the document's actual reference count. Fires only when the claimed plurality outruns the references present.",
-      "source_citation": "Wikipedia:Signs of AI writing § Vague attributions of opinion",
+      "source_citation": "Wikipedia:Signs of AI writing § Vague attributions and overgeneralization of opinions",
       "never_sufficient_alone": true,
       "check": "reference_plurality",
       "params": { "min_refs": 2 },
@@ -72,7 +72,7 @@
       "tier": 2,
       "weight": 0.3,
       "description": "Skipped heading levels (# straight to ###), a mechanical outline artifact.",
-      "source_citation": "Wikipedia:Signs of AI writing § Section headings",
+      "source_citation": "Wikipedia:Signs of AI writing § Skipping heading levels",
       "never_sufficient_alone": true,
       "check": "heading_level_skip",
       "examples": {

@@ -38,7 +38,7 @@
       "tier": 2,
       "weight": 0.8,
       "description": "Emoji used as document decoration. Analytic writing has no emoji; section-marker emoji are an LLM formatting default.",
-      "source_citation": "Wikipedia:Signs of AI writing § Emoji",
+      "source_citation": "Wikipedia:Signs of AI writing § Emoji as formatting",
       "never_sufficient_alone": true,
       "pattern": "[\\U0001F000-\\U0001FAFF\\u2600-\\u27BF\\u2B00-\\u2BFF]",
       "examples": {
@@ -68,7 +68,7 @@
       "tier": 2,
       "weight": 0.15,
       "description": "Thematic break (---) immediately before a heading, an LLM sectioning habit. Weak alone; gated by tier-2 clustering.",
-      "source_citation": "Wikipedia:Signs of AI writing § Horizontal rules",
+      "source_citation": "Wikipedia:Signs of AI writing § Thematic breaks between sections",
       "never_sufficient_alone": true,
       "pattern": "(?m)^-{3,}[ \\t]*\\n\\s*#{1,6}[ \\t]",
       "examples": {

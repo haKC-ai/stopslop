@@ -1,0 +1,73 @@
+name: rule-drift
+
+# The rule packs cite specific sections of Wikipedia:Signs of AI writing. That
+# guide is edited close to daily, so this does not watch the page: it watches
+# only the sections the rules actually cite, against a pinned revision that a
+# human re-pins after review. Findings land in one issue that is updated in
+# place rather than a new issue every week.
+
+on:
+  schedule:
+    - cron: "41 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: rule-drift
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check for rule drift
+        id: drift
+        run: python scripts/watch_sources.py --format markdown > drift.md || true
+
+      - name: Build the issue body
+        id: report
+        run: |
+          {
+            echo "body<<DRIFT_EOF"
+            cat drift.md
+            echo ""
+            echo "---"
+            echo "Re-run locally with \`python scripts/watch_sources.py\`."
+            echo "After reviewing, adjust the rules and re-pin with \`python scripts/watch_sources.py --update-pin\`,"
+            echo "which rewrites \`.rule-sources.json\`."
+            echo "DRIFT_EOF"
+          } >> "$GITHUB_OUTPUT"
+          cat drift.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open or update the drift issue
+        if: steps.drift.outputs.drift == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: ${{ steps.report.outputs.body }}
+        run: |
+          gh label create rule-drift --color B60205 --description "Cited source sections have moved" --force
+          existing=$(gh issue list --state open --label rule-drift --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$BODY"
+          else
+            gh issue create --title "Rule drift: cited guide sections have moved" --label rule-drift --body "$BODY"
+          fi
+
+      - name: Close the drift issue when clean
+        if: steps.drift.outputs.drift != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --state open --label rule-drift --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "Rule drift resolved: every cited section resolves and every scoreable section is covered."
+          fi
